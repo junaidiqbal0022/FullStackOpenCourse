@@ -7,5 +7,3 @@ export const Content = (props) => {
     </>
   );
 };
-
-export default Content;
