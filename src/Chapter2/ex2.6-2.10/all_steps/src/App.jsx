@@ -1,5 +1,7 @@
 import { useState } from "react";
-
+import Persons from "./Components/Persons";
+import PersonForm from "./Components/PersonForm";
+import Filter from "./Components/Filter";
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", phone: "040-123456", id: 1 },
@@ -28,6 +30,7 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
       return;
     }
+    // this is a very naive validation, just playing
     if (personObject.phone.includes("a")) {
       alert(`${newPhone} is not a valid phone number`);
       return;
@@ -49,51 +52,17 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <p>filter shown with</p>
-      <input
-        id="filter_name"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
+      <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <h1>add a new</h1>
-      <form onSubmit={onSubmit}>
-        <div>
-          name:
-          <input
-            id="name_field"
-            value={newName}
-            onChange={(e) => onChangeName(e)}
-          />
-        </div>
-        <div>
-          phone:
-          <input
-            id="phone_field"
-            value={newPhone}
-            onChange={(e) => onPhoneChange(e)}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        onSubmit={onSubmit}
+        onChangeName={onChangeName}
+        onPhoneChange={onPhoneChange}
+        newName={newName}
+        newPhone={newPhone}
+      />
       <h2>Numbers</h2>
-      {/* <div>debug: {newName}</div> */}
-      {(searchTerm
-        ? persons.filter((person) =>
-            person.name
-              .toLocaleLowerCase()
-              .includes(searchTerm.toLocaleLowerCase()),
-          )
-        : persons
-      ).map((person) => (
-        //can there be duplicated names?
-        // if not, we can use name as key,
-        // otherwise we need to generate a unique id for each person
-        //<div key={person.name}>{person.name}</div>
-        <div key={person.id}>
-          {person.name}: {person.phone}
-        </div>
-      ))}
+      <Persons persons={persons} searchTerm={searchTerm} />
     </div>
   );
 };
