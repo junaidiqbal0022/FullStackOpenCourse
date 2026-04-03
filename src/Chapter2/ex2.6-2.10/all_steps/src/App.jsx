@@ -2,14 +2,14 @@ import { useState } from "react";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    {
-      name: "Arto Hellas",
-      phone: "040-123456",
-      id: 1,
-    },
+    { name: "Arto Hellas", phone: "040-123456", id: 1 },
+    { name: "Ada Lovelace", phone: "39-44-5323523", id: 2 },
+    { name: "Dan Abramov", phone: "12-43-234345", id: 3 },
+    { name: "Mary Poppendieck", phone: "39-23-6423122", id: 4 },
   ]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -28,7 +28,7 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
       return;
     }
-    if (personObject.phone.includes('a')) {
+    if (personObject.phone.includes("a")) {
       alert(`${newPhone} is not a valid phone number`);
       return;
     }
@@ -48,6 +48,13 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <p>filter shown with</p>
+      <input
+        id="filter_name"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <h1>add a new</h1>
       <form onSubmit={onSubmit}>
         <div>
           name:
@@ -71,7 +78,14 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       {/* <div>debug: {newName}</div> */}
-      {persons.map((person) => (
+      {(searchTerm
+        ? persons.filter((person) =>
+            person.name
+              .toLocaleLowerCase()
+              .includes(searchTerm.toLocaleLowerCase()),
+          )
+        : persons
+      ).map((person) => (
         //can there be duplicated names?
         // if not, we can use name as key,
         // otherwise we need to generate a unique id for each person
