@@ -73,7 +73,7 @@ const App = () => {
       <h1>Anecdote of the Day</h1>
       <div>{anecdotes[selected]}</div>
       <StatisticLine text="has votes" value={votes[selected]} />
-
+      
       <Button text="next anecdote" onClick={onNextAnecdote}></Button>
       <Button text="vote" onClick={onVote}></Button>
       <h1>Anecdote with Most Votes</h1>
@@ -82,5 +82,6 @@ const App = () => {
     </>
   );
 };
+
 
 export default App;
