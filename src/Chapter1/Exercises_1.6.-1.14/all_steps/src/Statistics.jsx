@@ -1,5 +1,6 @@
 import React from "react";
-import { StatisticLine } from "./StatisticLine ";
+import { StatisticLine } from "./StatisticLine";
+import { Display } from "./Display";
 export const Statistics = ({ good, neutral, bad, all }) => {
   const handleAverage = () => {
     if (all.length === 0) {
@@ -28,7 +29,7 @@ export const Statistics = ({ good, neutral, bad, all }) => {
         <p>No feedback given</p>
       ) : (
         <>
-          <StatisticLine text="good" value={good} />
+          {/* <StatisticLine text="good" value={good} />
           <StatisticLine text="neutral" value={neutral} />
           <StatisticLine text="bad" value={bad} />
           <StatisticLine text="all" value={all.length} />
@@ -37,6 +38,16 @@ export const Statistics = ({ good, neutral, bad, all }) => {
             text="positive"
             value={handlePositive()}
             percentage={true}
+          /> */}
+          <Display
+            values={[
+              { text: "good", value: good },
+              { text: "neutral", value: neutral },
+              { text: "bad", value: bad },
+              { text: "all", value: all.length },
+              { text: "average", value: handleAverage() },
+              { text: "positive", value: handlePositive(), percentage: true },
+            ]}
           />
         </>
       )}
