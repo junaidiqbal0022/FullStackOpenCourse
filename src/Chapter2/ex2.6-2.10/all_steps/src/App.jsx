@@ -1,13 +1,21 @@
 import { useState } from "react";
 
 const App = () => {
-  const [persons, setPersons] = useState([{ name: "Arto Hellas", id: 1 }]);
+  const [persons, setPersons] = useState([
+    {
+      name: "Arto Hellas",
+      phone: "040-123456",
+      id: 1,
+    },
+  ]);
   const [newName, setNewName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
 
   const onSubmit = async (event) => {
     event.preventDefault();
     const personObject = {
       name: newName,
+      phone: newPhone,
       id: persons.length + 1,
     };
     if (persons.some((p) => p.name === personObject.name)) {
@@ -20,13 +28,22 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
       return;
     }
+    if (personObject.phone.includes('a')) {
+      alert(`${newPhone} is not a valid phone number`);
+      return;
+    }
     console.log("personObject is", personObject);
     setPersons(persons.concat(personObject));
     setNewName("");
+    setNewPhone("");
   };
   const onChangeName = (event) => {
     console.log("name is", event.target.value);
     setNewName(event.target.value);
+  };
+  const onPhoneChange = (event) => {
+    console.log("phone is", event.target.value);
+    setNewPhone(event.target.value);
   };
   return (
     <div>
@@ -41,6 +58,14 @@ const App = () => {
           />
         </div>
         <div>
+          phone:
+          <input
+            id="phone_field"
+            value={newPhone}
+            onChange={(e) => onPhoneChange(e)}
+          />
+        </div>
+        <div>
           <button type="submit">add</button>
         </div>
       </form>
@@ -51,7 +76,9 @@ const App = () => {
         // if not, we can use name as key,
         // otherwise we need to generate a unique id for each person
         //<div key={person.name}>{person.name}</div>
-        <div key={person.id}>{person.name}</div>
+        <div key={person.id}>
+          {person.name}: {person.phone}
+        </div>
       ))}
     </div>
   );
