@@ -3,7 +3,7 @@ import React from "react";
 export const StatisticLine = ({ text, value, percentage }) => {
   return (
     <div>
-      {text} : {value}
+      {text !== undefined ? `${text}  :` : ""} {value}
       {percentage ? "%" : ""}
     </div>
   );

@@ -54,6 +54,13 @@ const App = () => {
       `vote for: ${anecdotes[selected]}, Now it has ${copy[selected]} votes`,
     );
   };
+  const handleMostVoteCalc = () => {
+    const maxVotes = Math.max(...votes);
+    const indexOfMaxVotes = votes.indexOf(maxVotes);
+    var msg = `${anecdotes[indexOfMaxVotes]} with ${maxVotes} votes`;
+    console.log(msg);
+    return msg;
+  };
   return (
     <>
       {/* // <div>
@@ -63,11 +70,15 @@ const App = () => {
     //   <button onclick={() => onbad(bad)} text="bad" />
     //   <statistics good={good} neutral={neutral} bad={bad} all={all} />
     // </div> */}
+      <h1>Anecdote of the Day</h1>
       <div>{anecdotes[selected]}</div>
       <StatisticLine text="has votes" value={votes[selected]} />
 
       <Button text="next anecdote" onClick={onNextAnecdote}></Button>
       <Button text="vote" onClick={onVote}></Button>
+      <h1>Anecdote with Most Votes</h1>
+
+      <StatisticLine value={handleMostVoteCalc()} />
     </>
   );
 };
