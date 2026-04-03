@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Display } from "./Display";
 import { Button } from "./Button";
+import { Statistics } from "./Statistics";
 const App = () => {
   const Feedback = {
     GOOD: "good",
@@ -27,39 +27,14 @@ const App = () => {
     setBad(tempSet);
     setAll(all.concat(Feedback.BAD));
   };
-  const handleAverage = () => {
-    if (all.length === 0) {
-      return "average 0";
-    }
-    var average = (good - bad) / all.length;
-    console.log(
-      `good: ${good}, bad: ${bad}, all: ${all.length}, average: ${average}`,
-    );
-    return `average ${average}`;
-  };
-  const handlePositive = () => {
-    if (all.length === 0) {
-      return "positive 0%";
-    }
-    var positive = (good / all.length) * 100;
-    console.log(
-      `good: ${good}, bad: ${bad}, all: ${all.length}, positive: ${positive}`,
-    );
-    return `positive ${positive}%`;
-  };
+
   return (
     <div>
       <h1>give feedback</h1>
       <Button onClick={() => onGood(good)} text="good" />
       <Button onClick={() => onNeutral(neutral)} text="neutral" />
       <Button onClick={() => onBad(bad)} text="bad" />
-      <h1>statistics</h1>
-      <Display text={`good ${good}`} />
-      <Display text={`neutral ${neutral}`} />
-      <Display text={`bad ${bad}`} />
-      <Display text={`all ${all.length}`} />
-      <Display text={handleAverage()} />
-      <Display text={handlePositive()} />
+      <Statistics good={good} neutral={neutral} bad={bad} all={all} />
     </div>
   );
 };
