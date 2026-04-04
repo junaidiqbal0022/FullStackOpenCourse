@@ -1,5 +1,39 @@
-const OneCountries = ({ country }) => {
-  console.log("rendering OneCountries component with country", country);
+import { useEffect, useState } from "react";
+import { getWeather } from "../services/CountriesApi";
+const OneCountries = ({ country, setError }) => {
+  const [weather, setWeather] = useState("");
+  const [capital, setCapital] = useState("");
+
+  useEffect(() => {
+    if (!country?.capital) {
+      setError("Capital Not Found");
+      return;
+    }
+    setCapital(country.capital[0]);
+
+    if (!country?.capitalInfo) {
+      //console.log("capital not found in ", country);
+      return;
+    }
+    console.log("caitalinfo", country.capitalInfo);
+    if (!country.capitalInfo || !country.capitalInfo.latlng) {
+      setError("Country's Capital's Latitude and longitude not found");
+      return;
+    }
+    var latLng = country.capitalInfo.latlng;
+    getWeather(latLng[0], latLng[1])
+      .then((res) => {
+        if (!res) {
+          setError("Weather Details Not Found");
+          return;
+        }
+        setWeather(res);
+        console.log("Weather", res);
+      })
+      .catch((error) => {
+        setError(`Error: ${error}`);
+      });
+  }, []);
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -22,6 +56,14 @@ const OneCountries = ({ country }) => {
       </ul>
       <h1 style={{ marginBottom: 20 }}>Flag</h1>
       <img src={country.flags.png} alt={`flag of ${country.name.common}`} />
+      {capital ? (
+        <>
+          <h1>Weather in {capital}</h1>
+          {weather && <>Hello</>}
+        </>
+      ) : (
+        <p>capital not located to get weather info...</p>
+      )}{" "}
     </div>
   );
 };

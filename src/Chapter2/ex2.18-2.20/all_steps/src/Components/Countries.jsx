@@ -1,13 +1,16 @@
 import { useState } from "react";
 import Button from "./Button";
 import OneCountries from "./OneCountries";
+import { useEffect } from "react";
 
 const Countries = (props) => {
   const [oneCountry, setoneCountry] = useState();
   const onShow = (country) => {
+    console.log("setOneCountry", country);
     setoneCountry(country);
   };
-  console.log("rendering Countries component with props", props);
+
+  //  console.log("rendering Countries component with props", props);
   return (
     <>
       <ul>
@@ -17,11 +20,13 @@ const Countries = (props) => {
             style={{ display: "flex", alignItems: "left", marginBottom: 2 }}
           >
             {country.name.common}
-            <Button country={oneCountry} onShow={() => onShow(country)} />
+            <Button country={country} onShow={() => onShow(country)} />
           </li>
         ))}
       </ul>
-      {oneCountry && <OneCountries country={oneCountry} />}
+      {oneCountry && (
+        <OneCountries setError={props.setError} country={oneCountry} />
+      )}
     </>
   );
 };

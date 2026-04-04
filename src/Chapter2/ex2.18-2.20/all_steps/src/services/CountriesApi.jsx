@@ -11,4 +11,13 @@ const getAllCountries = async () => {
   var res = await request;
   return res.data;
 };
-export { getCountry, getAllCountries };
+
+const weatherBaseurl = "http://api.openweathermap.org/data/3.0/onecall?";
+
+const getWeather = async (lat, lon) => {
+  var url = `${weatherBaseurl}lat=${lat}&lon=${lon}&exclude=hourly,daily&appid=${import.meta.env.VITE_API_KEY}`;
+  const req = axios.get(url);
+  const res = await req;
+  return res.data;
+};
+export { getCountry, getAllCountries, getWeather };

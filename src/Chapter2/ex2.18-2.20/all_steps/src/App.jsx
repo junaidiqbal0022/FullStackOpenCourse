@@ -65,12 +65,15 @@ function App() {
       ) : displayCountries.length == 1 ? (
         <>
           {/* {console.log("displaying country", displayCountries[0])} */}
-          <OneCountries country={displayCountries[0]} />
+          <OneCountries
+            setError={setErrorMessage}
+            country={displayCountries[0]}
+          />
         </>
       ) : (
         <>
           {/* {console.log("displaying countries", displayCountries)} */}
-          <Countries countries={displayCountries} />
+          <Countries countries={displayCountries} setError={setErrorMessage} />
         </>
       )}
     </div>
