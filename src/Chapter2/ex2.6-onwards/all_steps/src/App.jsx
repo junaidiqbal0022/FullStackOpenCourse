@@ -3,11 +3,36 @@ import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
 import { getAll, create, update, deleteId } from "./services/persons";
+import Error from "./Components/Error";
+import Success from "./Components/Success";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const setSuccessMessageWithTimeout = (message) => {
+    console.log("setting success message to", message);
+    setSuccessMessage(message);
+    setNewName("");
+    setNewPhone("");
+    setErrorMessage("");
+    console.log("success message is", message);
+    const timeout = 5000;
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, timeout);
+  };
+  const setErrorMessageWithTimeout = (message) => {
+    console.log("setting error message to", message);
+    setErrorMessage(message);
+    setSuccessMessage("");
+    const timeout = 5000;
+    setTimeout(() => {
+      setErrorMessage("");
+    }, timeout);
+  };
   useEffect(() => {
     console.log("effect");
     getAll()
@@ -16,15 +41,14 @@ const App = () => {
         setPersons(response);
       })
       .catch((error) => {
-        console.log("error is", error);
-        alert("failed to fetch data from server");
+        setErrorMessageWithTimeout("failed to fetch data from server");
       });
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
     //prevent default doesn't catch empty?
     if (!newName || !newPhone) {
-      alert("name and phone number cannot be empty");
+      setErrorMessage("name and phone number cannot be empty");
       return;
     }
     const personObject = {
@@ -45,12 +69,17 @@ const App = () => {
           setPersons(
             persons.map((p) => (p.id !== existingPerson.id ? p : response)),
           );
-          setNewName("");
-          setNewPhone("");
+          setSuccessMessageWithTimeout(`updated ${newName} in server`);
         })
         .catch((error) => {
-          console.log("error is", error);
-          alert(`failed to update ${newName} in server`);
+          if (error.response?.status === 404) {
+            setErrorMessageWithTimeout(
+              `Person ${newName} was not found on server side.`,
+            );
+            return;
+          }
+          setErrorMessageWithTimeout(`failed to update ${newName} in server`);
+          return;
         });
       return;
     } else if (existingPerson) {
@@ -60,19 +89,18 @@ const App = () => {
 
     // this is a very naive validation, just playing
     if (personObject.number.includes("a")) {
-      alert(`${newPhone} is not a valid phone number`);
+      setErrorMessage(`${newPhone} is not a valid phone number`);
       return;
     }
     console.log("personObject is", personObject);
     create(personObject)
       .then((response) => {
         setPersons(persons.concat(response));
-        setNewName("");
-        setNewPhone("");
+        setSuccessMessageWithTimeout(`added ${newName} to server`);
       })
       .catch((error) => {
-        console.log("error is", error);
-        alert("failed to add person to server");
+        setErrorMessageWithTimeout("failed to add person to server");
+        return;
       });
   };
   const onChangeName = (event) => {
@@ -94,10 +122,16 @@ const App = () => {
       .then((response) => {
         console.log("delete response is", response);
         setPersons(persons.filter((p) => p.id !== id));
+        setSuccessMessageWithTimeout(`deleted ${name} from server`);
       })
       .catch((error) => {
-        console.log("error is", error);
-        alert(`failed to delete ${name} from server`);
+        if (error.response?.status === 404) {
+          setErrorMessageWithTimeout(
+            `Person ${newName} was not found on server side.`,
+          );
+          return;
+        }
+        setErrorMessageWithTimeout(`failed to delete ${name} from server`);
       });
   };
 
@@ -107,6 +141,8 @@ const App = () => {
       <p>filter shown with</p>
       <Filter searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <h1>add a new</h1>
+      <Error errorMessage={errorMessage} />
+      <Success successMessage={successMessage} />
       <PersonForm
         onSubmit={onSubmit}
         onChangeName={onChangeName}
