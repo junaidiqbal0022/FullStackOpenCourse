@@ -39,7 +39,7 @@ function App() {
     if (!searchTerm) {
       return;
     }
-    console.log("filtering countries with search term", searchTerm);
+    //console.log("filtering countries with search term", searchTerm);
     const filteredCountries = countries.filter((country) =>
       country.name.common.toLowerCase().includes(searchTerm.toLowerCase()),
     );
@@ -49,7 +49,7 @@ function App() {
       return;
     }
     setDisplayCountries(filteredCountries);
-    console.log("filtered countries", filteredCountries);
+    //  console.log("filtered countries", filteredCountries);
   }, [countries, searchTerm]);
   return (
     <div style={{ margin: "10px", padding: "10px" }}>
@@ -64,12 +64,12 @@ function App() {
         </p>
       ) : displayCountries.length == 1 ? (
         <>
-          {console.log("displaying country", displayCountries[0])}
+          {/* {console.log("displaying country", displayCountries[0])} */}
           <OneCountries country={displayCountries[0]} />
         </>
       ) : (
         <>
-          {console.log("displaying countries", displayCountries)}
+          {/* {console.log("displaying countries", displayCountries)} */}
           <Countries countries={displayCountries} />
         </>
       )}
