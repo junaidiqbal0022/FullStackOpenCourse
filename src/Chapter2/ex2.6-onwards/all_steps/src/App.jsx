@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
+import { getAll, create, update, deleteId } from "./services/persons";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -10,10 +10,15 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
-    });
+    getAll()
+      .then((response) => {
+        console.log("promise fulfilled");
+        setPersons(response);
+      })
+      .catch((error) => {
+        console.log("error is", error);
+        alert("failed to fetch data from server");
+      });
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -38,9 +43,16 @@ const App = () => {
       return;
     }
     console.log("personObject is", personObject);
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    setNewPhone("");
+    create(personObject)
+      .then((response) => {
+        setPersons(persons.concat(response));
+        setNewName("");
+        setNewPhone("");
+      })
+      .catch((error) => {
+        console.log("error is", error);
+        alert("failed to add person to server");
+      });
   };
   const onChangeName = (event) => {
     console.log("name is", event.target.value);
@@ -50,6 +62,24 @@ const App = () => {
     console.log("phone is", event.target.value);
     setNewPhone(event.target.value);
   };
+  const handleDeletePerson = (id, name) => {
+    console.log("delete person with id", id);
+    if (!window.confirm(`Delete ${name} ?`)) {
+      console.log("deletion cancelled by user");
+      return;
+    }
+    console.log("deletion confirmed by user");
+    deleteId(id)
+      .then((response) => {
+        console.log("delete response is", response);
+        setPersons(persons.filter((p) => p.id !== id));
+      })
+      .catch((error) => {
+        console.log("error is", error);
+        alert(`failed to delete ${name} from server`);
+      });
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -64,7 +94,11 @@ const App = () => {
         newPhone={newPhone}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} searchTerm={searchTerm} />
+      <Persons
+        persons={persons}
+        searchTerm={searchTerm}
+        deletePerson={(id, name) => handleDeletePerson(id, name)}
+      />
     </div>
   );
 };
