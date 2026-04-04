@@ -11,10 +11,10 @@ const PersonForm = (props) => {
           />
         </div>
         <div>
-          phone:
+          number:
           <input
             id="phone_field"
-            value={props.newPhone}
+            value={props.number}
             onChange={(e) => props.onPhoneChange(e)}
           />
         </div>

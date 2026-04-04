@@ -15,7 +15,7 @@ const Persons = ({ persons, searchTerm }) => {
         // otherwise we need to generate a unique id for each person
         //<div key={person.name}>{person.name}</div>
         <div key={person.id}>
-          {person.name}: {person.phone}
+          {person.name}: {person.number}
         </div>
       ))}
     </>

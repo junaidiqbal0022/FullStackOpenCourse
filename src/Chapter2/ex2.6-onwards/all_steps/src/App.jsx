@@ -1,23 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", phone: "040-123456", id: 1 },
-    { name: "Ada Lovelace", phone: "39-44-5323523", id: 2 },
-    { name: "Dan Abramov", phone: "12-43-234345", id: 3 },
-    { name: "Mary Poppendieck", phone: "39-23-6423122", id: 4 },
-  ]);
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-
+  useEffect(() => {
+    console.log("effect");
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("promise fulfilled");
+      setPersons(response.data);
+    });
+  }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
     const personObject = {
       name: newName,
-      phone: newPhone,
+      number: newPhone,
       id: persons.length + 1,
     };
     if (persons.some((p) => p.name === personObject.name)) {
@@ -31,7 +33,7 @@ const App = () => {
       return;
     }
     // this is a very naive validation, just playing
-    if (personObject.phone.includes("a")) {
+    if (personObject.number.includes("a")) {
       alert(`${newPhone} is not a valid phone number`);
       return;
     }
