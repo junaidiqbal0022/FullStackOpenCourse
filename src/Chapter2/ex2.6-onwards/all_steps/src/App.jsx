@@ -22,21 +22,42 @@ const App = () => {
   }, []);
   const onSubmit = async (event) => {
     event.preventDefault();
+    //prevent default doesn't catch empty?
+    if (!newName || !newPhone) {
+      alert("name and phone number cannot be empty");
+      return;
+    }
     const personObject = {
       name: newName,
       number: newPhone,
       id: persons.length + 1,
     };
-    if (persons.some((p) => p.name === personObject.name)) {
-      console.log(
-        "personObject is {0}, while existing {1}",
-        personObject,
-        persons,
-      );
-
-      alert(`${newName} is already added to phonebook`);
+    1;
+    var existingPerson = persons.find((p) => p.name === personObject.name);
+    if (
+      existingPerson &&
+      window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`,
+      )
+    ) {
+      update(existingPerson.id, personObject)
+        .then((response) => {
+          setPersons(
+            persons.map((p) => (p.id !== existingPerson.id ? p : response)),
+          );
+          setNewName("");
+          setNewPhone("");
+        })
+        .catch((error) => {
+          console.log("error is", error);
+          alert(`failed to update ${newName} in server`);
+        });
+      return;
+    } else if (existingPerson) {
+      console.log("update cancelled by user");
       return;
     }
+
     // this is a very naive validation, just playing
     if (personObject.number.includes("a")) {
       alert(`${newPhone} is not a valid phone number`);
@@ -55,11 +76,11 @@ const App = () => {
       });
   };
   const onChangeName = (event) => {
-    console.log("name is", event.target.value);
+    //  console.log("name is", event.target.value);
     setNewName(event.target.value);
   };
   const onPhoneChange = (event) => {
-    console.log("phone is", event.target.value);
+    //console.log("phone is", event.target.value);
     setNewPhone(event.target.value);
   };
   const handleDeletePerson = (id, name) => {
