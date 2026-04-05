@@ -3,19 +3,20 @@ import { getWeather } from "../services/CountriesApi";
 const OneCountries = ({ country, setError }) => {
   const [weather, setWeather] = useState("");
   const [capital, setCapital] = useState("");
-
+  const [icon, setIcon] = useState("");
   useEffect(() => {
     if (!country?.capital) {
       setError("Capital Not Found");
       return;
     }
+    setWeather("");
     setCapital(country.capital[0]);
 
     if (!country?.capitalInfo) {
       //console.log("capital not found in ", country);
       return;
     }
-    console.log("caitalinfo", country.capitalInfo);
+    //console.log("caitalinfo", country.capitalInfo);
     if (!country.capitalInfo || !country.capitalInfo.latlng) {
       setError("Country's Capital's Latitude and longitude not found");
       return;
@@ -28,12 +29,21 @@ const OneCountries = ({ country, setError }) => {
           return;
         }
         setWeather(res);
-        console.log("Weather", res);
+        //console.log("Weather", res);
       })
       .catch((error) => {
         setError(`Error: ${error}`);
       });
-  }, []);
+  }, [country]);
+  useEffect(() => {
+    setIcon("");
+    if (!weather || !weather.weather) {
+      return;
+    }
+    const iconBase = "https://openweathermap.org/payload/api/media/file";
+    var url = `${iconBase}/${weather.weather[0].icon}.png`;
+    setIcon(url);
+  }, [weather]);
   return (
     <div>
       <h2>{country.name.common}</h2>
@@ -59,7 +69,13 @@ const OneCountries = ({ country, setError }) => {
       {capital ? (
         <>
           <h1>Weather in {capital}</h1>
-          {weather && <>Hello</>}
+          {weather && (
+            <>
+              <h4>Temperature {weather.main.temp} celcius.</h4>
+              {icon && <img src={icon} alt={`Weather of ${capital}`} />}
+              <p>Wind {weather.wind.speed} m/s.</p>
+            </>
+          )}
         </>
       ) : (
         <p>capital not located to get weather info...</p>

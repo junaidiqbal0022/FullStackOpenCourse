@@ -1,12 +1,11 @@
 import { useState } from "react";
 import Button from "./Button";
 import OneCountries from "./OneCountries";
-import { useEffect } from "react";
 
 const Countries = (props) => {
   const [oneCountry, setoneCountry] = useState();
   const onShow = (country) => {
-    console.log("setOneCountry", country);
+    //console.log("setOneCountry", country);
     setoneCountry(country);
   };
 

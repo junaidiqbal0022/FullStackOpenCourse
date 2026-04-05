@@ -11,9 +11,6 @@ const Error = ({ errorMessage }) => {
   };
 
   if (errorMessage) {
-    {
-      console.log("rendering error component with message", errorMessage);
-    }
     return <div style={style}>{errorMessage}</div>;
   }
   return null;
