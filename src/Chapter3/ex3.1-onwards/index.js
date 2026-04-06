@@ -1,11 +1,12 @@
 const express = require('express');
+const cors = require('cors')
 //morgan
 var morgan = require('morgan')
 morgan(':method :url :status :request - :response-time ms')
 // EXAMPLE: only log error responses
 const app = express();
 app.use(express.json());
-
+app.use(cors())
 var logger = morgan(function (tokens, req, res) {
     return [
         req.method,
@@ -116,7 +117,7 @@ app.post('/api/persons', (request, response) => {
 
     response.json(contact)
 })
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })

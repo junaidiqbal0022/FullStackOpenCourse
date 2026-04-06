@@ -81,7 +81,7 @@ out
 # Nuxt.js build / generate output
 .nuxt
 dist
-
+!/src/Chapter3/ex3.1-onwards/dist/
 # Gatsby files
 .cache/
 # Comment in the public line in if your project uses Gatsby and not Next.js
