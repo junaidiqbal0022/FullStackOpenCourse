@@ -1,6 +1,23 @@
 const express = require('express');
+//morgan
+var morgan = require('morgan')
+morgan(':method :url :status :request - :response-time ms')
+// EXAMPLE: only log error responses
 const app = express();
 app.use(express.json());
+
+var logger = morgan(function (tokens, req, res) {
+    return [
+        req.method,
+        req.url,
+        res.statusCode,
+        res.get('Content-Length'),
+        '-',
+        tokens['response-time'](req, res), 'ms',
+        JSON.stringify(req.body),
+    ].join(' ')
+})
+app.use(logger)
 
 let phoneBook = [
     {
