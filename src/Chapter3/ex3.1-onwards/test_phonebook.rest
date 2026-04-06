@@ -1,0 +1,23 @@
+GET http://localhost:3001/
+
+###
+GET http://localhost:3001/api/info
+
+###
+GET http://localhost:3001/api/persons
+
+###
+GET http://localhost:3001/api/persons/2
+
+###
+DELETE http://localhost:3001/api/persons/2
+
+
+###
+POST http://localhost:3001/api/persons/ 
+content-type: application/json
+
+{
+ "name": "Hello World 2",
+ "number": "123-456-7890"
+}
