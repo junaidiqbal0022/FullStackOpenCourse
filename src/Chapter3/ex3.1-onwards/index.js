@@ -1,14 +1,14 @@
 const express = require('express');
-const cors = require('cors')
 //morgan
 var morgan = require('morgan')
 morgan(':method :url :status :request - :response-time ms')
 // EXAMPLE: only log error responses
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(express.static('dist'))
 var logger = morgan(function (tokens, req, res) {
     return [
+        new Date().toISOString(),
         req.method,
         req.url,
         res.statusCode,
