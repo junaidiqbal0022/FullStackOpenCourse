@@ -1,4 +1,6 @@
 const express = require('express');
+const mango = require('./models/mango')
+require('dotenv').config()
 //morgan
 var morgan = require('morgan')
 morgan(':method :url :status :request - :response-time ms')
@@ -30,7 +32,14 @@ app.get('/api/info', (request, response) => {
 });
 
 app.get('/api/persons', (request, response) => {
-    response.json(phoneBook)
+    return mango.getData().then((result) => {
+        console.log('Data fetched successfully:', result)
+        response.json(result)
+    }).catch((error) => {
+        console.error('Error fetching data:', error)
+        response.status(500).json({ error: 'Internal Server Error' })
+    }
+    )
 });
 
 app.get('/api/persons/:id', (request, response) => {
@@ -38,28 +47,61 @@ app.get('/api/persons/:id', (request, response) => {
     if (!id) {
         return response.status(400).json({ error: 'ID missing' })
     }
-
-    const contact = phoneBook.find(c => c.id === id)
-    response.json(contact)
+    return mango.getDataById(id).then((result) => {
+        if (result) {
+            response.json(result)
+        } else {
+            response.status(404).json({ error: 'Person not found' })
+        }
+    }).catch((error) => {
+        console.error('Error fetching data:', error)
+        response.status(500).json({ error: 'Internal Server Error' })
+    })
 });
 
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
+    console.log(`Received DELETE request for ID: ${id}`)
     if (!id) {
+        console.error('ID missing in request')
         return response.status(400).json({ error: 'ID missing' })
     }
-    phoneBook = phoneBook.filter(contact => contact.id !== id)
-
-    response.status(204).end()
+    return mango.deleteData(id).then((result) => {
+        if (result) {
+            response.status(204).end()
+        } else {
+            response.status(404).json({ error: 'Person not found' })
+        }
+    }).catch((error) => {
+        console.error('Error deleting data:', error)
+        response.status(500).json({ error: 'Internal Server Error' })
+    })
 });
 
-const generateId = () => {
-    return Math.ceil(Math.random(0, 1_0000_000_000) * 1_0000_000_000).toString();
-    // const maxId = phoneBook.length > 0
-    //     ? Math.max(...phoneBook.map(c => Number(c.id)))
-    //     : 0
-    // return String(maxId + 1)
-}
+app.put('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const body = request.body
+    console.log(`Received PUT request for ID: ${id} with body:`, body)
+    if (!id) {
+        console.error('ID missing in request')
+        return response.status(400).json({ error: 'ID missing' })
+    }
+    if (!body || !body.number) {
+        console.error('Number missing in request body')
+        return response.status(400).json({ error: 'Number missing' })
+    }
+    return mango.updateData(id, body.number).then((result) => {
+        if (result) {
+            response.json(result)
+        } else {
+            response.status(404).json({ error: 'Person not found' })
+        }
+    }).catch((error) => {
+        console.error('Error updating data:', error)
+        response.status(500).json({ error: 'Internal Server Error' })
+    })
+
+})
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
@@ -79,21 +121,20 @@ app.post('/api/persons', (request, response) => {
             error: 'number missing'
         })
     }
-    if (phoneBook.some(c => c.name === body.name)) {
-        return response.status(400).json({
-            error: 'name already exists'
-        })
-    }
-
-    const contact = {
+    console.log('Received POST request with body:', body)
+    mango.writeData({
         name: body.name,
-        number: body.number,
-        id: generateId(),
-    }
-
-    phoneBook = phoneBook.concat(contact)
-
-    response.json(contact)
+        number: body.number
+    }).then((result) => {
+        if (result) {
+            response.json(result)
+        } else {
+            response.status(400).json({ error: 'Person with the same name already exists' })
+        }
+    }).catch((error) => {
+        console.error('Error writing data:', error)
+        response.status(500).json({ error: 'Internal Server Error' })
+    });
 })
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {

@@ -69,7 +69,7 @@ web_modules/
 .env
 .env.*
 !.env.example
-
+/src/Chapter3/ex3.1-onwards/.env #explicitly ignore
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
