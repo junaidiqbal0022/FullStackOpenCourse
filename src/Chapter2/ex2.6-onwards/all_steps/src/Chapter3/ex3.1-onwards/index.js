@@ -1,8 +1,7 @@
 const express = require('express');
 const mango = require('./models/mango')
 const errorCodes = require('./helpers/errorCodes')
-const cors = require('cors')
-
+require('dotenv').config()
 //morgan
 var morgan = require('morgan');
 const e = require('express');
@@ -11,8 +10,6 @@ morgan(':method :url :status :request - :response-time ms')
 const app = express();
 app.use(express.json());
 app.use(express.static('dist'))
-//leaving cors here to avoid adding/removing when switching between frontend and backend development.
-// app.use(cors())
 
 var logger = morgan(function (tokens, req, res) {
     return [
@@ -78,27 +75,6 @@ app.get('/api/persons/:id', (request, response, next) => {
     })
 });
 
-app.get('/api/persons/name/:name', (request, response, next) => {
-    const name = request.params.name
-    if (!name) {
-        const error = new Error('Name is Missing');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    return mango.getDataByName(name).then((result) => {
-        if (result) {
-            response.json(result)
-        } else {
-            const error = new Error(`No person found with name ${name}`);
-            error.name = errorCodes.IdNotFound
-            next(error)
-        }
-    }).catch((error) => {
-        error.name = errorCodes.InternalServerError
-        next(error)
-    })
-});
-
 //only for testing purposes, not allowed in production
 app.post('/api/persons/temp', (request, response, next) => {
     console.log('Received DELETE request for all data')
@@ -106,6 +82,7 @@ app.post('/api/persons/temp', (request, response, next) => {
     error.name = errorCodes.BulkDeleteNotAllowed
     next(error);
 });
+
 app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
     console.log(`Received DELETE request for ID: ${id}`)
@@ -128,27 +105,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     })
 });
 
-app.delete('/api/persons/delete/:id', (request, response, next) => {
-    const id = request.params.id
-    console.log(`Received DELETE request for ID: ${id}`)
-    if (!id) {
-        const error = new Error('Id is Missing');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    return mango.deleteData(id).then((result) => {
-        if (result) {
-            response.status(204).end()
-        } else {
-            const error = new Error(`No person found with ID ${id}`);
-            error.name = errorCodes.IdNotFound
-            next(error)
-        }
-    }).catch((error) => {
-        error.name = errorCodes.InternalServerError
-        next(error)
-    })
-});
+
 
 app.put('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
@@ -189,82 +146,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 })
 
-app.put('/api/persons/update/:id', (request, response, next) => {
-    const id = request.params.id
-    const body = request.body
-    console.log(`Received PUT request for ID: ${id} with body:`, body)
-    if (!body) {
-        const error = new Error('Request body is missing');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    if (!id) {
-        const error = new Error('Id is Missing');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    if (!body.number) {
-        const error = new Error('Number missing in request body');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    if (!body.name) {
-        const error = new Error('Name missing in request body');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    return mango.updateData(id, body.name, body.number).then((result) => {
-        if (result) {
-            response.json(result)
-        } else {
-            const error = new Error(`No person found with ID ${id}`);
-            error.name = errorCodes.IdNotFound
-            next(error)
-        }
-    }).catch((error) => {
-        error.name = errorCodes.InternalServerError
-        next(error)
-    })
-
-})
-
-app.post('/api/persons/add', (request, response, next) => {
-    const body = request.body
-
-    if (!body) {
-        const error = new Error('Request body is missing');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    if (!body.name) {
-        const error = new Error('Name missing in request body');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    if (!body.number) {
-        const error = new Error('Number missing in request body');
-        error.name = errorCodes.ValidationError
-        next(error)
-    }
-    console.log('Received POST request with body:', body)
-    mango.writeData({
-        name: body.name,
-        number: body.number
-    }).then((result) => {
-        if (result) {
-            response.json(result)
-        } else {
-            const error = new Error(`Person with the same name ${body.name} already exists`);
-            error.name = errorCodes.DuplicateEntry
-            next(error)
-        }
-    }).catch((error) => {
-        error.name = errorCodes.InternalServerError
-        next(error)
-    });
-})
-
-app.post('/api/persons/', (request, response, next) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
 
     if (!body) {

@@ -1,5 +1,8 @@
 import ButtonDelete from "./ButtonDelete";
 const Persons = ({ persons, searchTerm, deletePerson }) => {
+  if (!persons || persons.length === 0) {
+    return <div>No persons to display</div>;
+  }
   return (
     <>
       {/* <div>debug: {newName}</div> */}

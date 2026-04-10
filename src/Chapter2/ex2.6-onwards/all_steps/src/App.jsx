@@ -2,9 +2,16 @@ import { useState, useEffect } from "react";
 import Persons from "./Components/Persons";
 import PersonForm from "./Components/PersonForm";
 import Filter from "./Components/Filter";
-import { getAll, create, update, deleteId } from "./services/persons";
+import {
+  getAll,
+  create,
+  update,
+  deleteId,
+  getByName,
+} from "./services/persons";
 import Error from "./Components/Error";
 import Success from "./Components/Success";
+import errorCodes from "./helpers/errorCodes";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -33,6 +40,7 @@ const App = () => {
       setErrorMessage("");
     }, timeout);
   };
+
   useEffect(() => {
     console.log("effect");
     getAll()
@@ -41,9 +49,108 @@ const App = () => {
         setPersons(response);
       })
       .catch((error) => {
-        setErrorMessageWithTimeout("failed to fetch data from server");
+        setErrorMessageWithTimeout("failed to fetch data from server ", error);
       });
   }, []);
+  const updatePerson = (personObject) => {
+    const existingPerson = persons.find((p) => p.name === personObject.name);
+
+    if (
+      existingPerson &&
+      window.confirm(
+        `${personObject.name} is already added to phonebook, replace the old number with a new one?`,
+      )
+    ) {
+      update(existingPerson.id, personObject)
+        .then((response) => {
+          var personsCopy = persons.filter((p) => p.id !== existingPerson.id);
+          setPersons([]);
+          setPersons(personsCopy.concat(response));
+          setSuccessMessageWithTimeout(
+            `updated ${personObject.name} in server`,
+          );
+          return true;
+        })
+        .catch((error) => {
+          if (error.response?.status === 404) {
+            setErrorMessageWithTimeout(
+              `Person ${personObject.name} was not found on server side.`,
+            );
+            return true;
+          }
+          setErrorMessageWithTimeout(
+            `failed to update ${personObject.name} in server`,
+          );
+          return true;
+        });
+      return;
+    } else if (existingPerson) {
+      console.log("update cancelled by user");
+      return true;
+    }
+    console.log("person does not exist, create flow should proceed");
+    return false;
+  };
+  const createPerson = async (personObject) => {
+    create(personObject)
+      .then((response) => {
+        setPersons(persons.concat(response));
+        console.log("person added successfully", response);
+        setSuccessMessageWithTimeout(`added ${personObject.name} to server`);
+        return;
+      })
+      .catch((error) => {
+        console.log(
+          "Error updating persons state after adding new person:",
+          error.response?.status,
+          error.response?.data?.errorCode,
+        );
+
+        if (
+          error.response?.status === 409 &&
+          error.response?.data?.errorCode == errorCodes.DuplicateEntry
+        ) {
+          console.log(
+            `Duplicate entry error for ${personObject.name}, fetching existing data from server`,
+          );
+          setErrorMessageWithTimeout(
+            `Person with name ${personObject.name} already exists on server.`,
+          );
+          getByName(personObject.name)
+            .then(async (response) => {
+              if (!response) {
+                setErrorMessageWithTimeout(
+                  `Person with name ${personObject.name} not found on server after duplicate entry error.`,
+                );
+                return;
+              }
+
+              setPersons((prev) => [
+                ...prev.filter((p) => p.name !== response.name),
+                response,
+              ]);
+              setErrorMessageWithTimeout(
+                `Person with name ${personObject.name} already exists on server. Updated local data with server data.`,
+              );
+              return;
+            })
+            .catch((error) => {
+              setErrorMessageWithTimeout(
+                `Failed to fetch existing person data for ${personObject.name} from server.`,
+              );
+              setErrorMessageWithTimeout(
+                `failed to update local data for ${personObject.name} `,
+                error,
+              );
+            });
+          return;
+        } else {
+          setErrorMessageWithTimeout("failed to update local data ", error);
+          return;
+        }
+      });
+  };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     //prevent default doesn't catch empty?
@@ -56,52 +163,17 @@ const App = () => {
       number: newPhone,
       id: persons.length + 1,
     };
-    1;
-    var existingPerson = persons.find((p) => p.name === personObject.name);
-    if (
-      existingPerson &&
-      window.confirm(
-        `${newName} is already added to phonebook, replace the old number with a new one?`,
-      )
-    ) {
-      update(existingPerson.id, personObject)
-        .then((response) => {
-          setPersons(
-            persons.map((p) => (p.id !== existingPerson.id ? p : response)),
-          );
-          setSuccessMessageWithTimeout(`updated ${newName} in server`);
-        })
-        .catch((error) => {
-          if (error.response?.status === 404) {
-            setErrorMessageWithTimeout(
-              `Person ${newName} was not found on server side.`,
-            );
-            return;
-          }
-          setErrorMessageWithTimeout(`failed to update ${newName} in server`);
-          return;
-        });
-      return;
-    } else if (existingPerson) {
-      console.log("update cancelled by user");
+    if (persons.some((p) => p.name === personObject.name)) {
+      updatePerson(personObject);
       return;
     }
-
     // this is a very naive validation, just playing
     if (personObject.number.includes("a")) {
       setErrorMessage(`${newPhone} is not a valid phone number`);
       return;
     }
     console.log("personObject is", personObject);
-    create(personObject)
-      .then((response) => {
-        setPersons(persons.concat(response));
-        setSuccessMessageWithTimeout(`added ${newName} to server`);
-      })
-      .catch((error) => {
-        setErrorMessageWithTimeout("failed to add person to server");
-        return;
-      });
+    createPerson(personObject);
   };
   const onChangeName = (event) => {
     //  console.log("name is", event.target.value);

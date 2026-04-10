@@ -8,13 +8,10 @@ GET http://localhost:3001/api/persons
 
 ###
 GET http://localhost:3001/api/persons/2
-###
-GET http://localhost:3001/api/persons/name/Arto%20Hellas
 
 ###
 DELETE http://localhost:3001/api/persons/2
-###
-DELETE http://localhost:3001/api/persons/delete/2
+
 
 ###
 POST http://localhost:3001/api/persons/ 
@@ -26,24 +23,7 @@ content-type: application/json
  "number": "123-456-7890"
 }
 ###
-POST http://localhost:3001/api/persons/add
-content-type: application/json
-
-{
- "id" : "f15c35ec-0931-44fb-9fa1-81bd4e2ec29f",   
- "name": "Hello World 2",
- "number": "123-456-7890"
-}
-###
 PUT http://localhost:3001/api/persons/2
-content-type: application/json
-
-{
- "name": "Hello World 2",
- "number": "123-456-7890"
-}
-###
-PUT http://localhost:3001/api/persons/update/2
 content-type: application/json
 
 {
