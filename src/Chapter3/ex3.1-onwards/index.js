@@ -32,8 +32,8 @@ app.use(logger)
 app.get('/', (request, response) => {
   response.send(
     '<h1>Welcom to Phone Book! This is radio station Tampere and today is: </br>' +
-      new Date() +
-      '</h1>',
+    new Date() +
+    '</h1>',
   )
 })
 

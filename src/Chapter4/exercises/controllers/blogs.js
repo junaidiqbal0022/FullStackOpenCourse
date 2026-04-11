@@ -1,0 +1,19 @@
+const blogRouter = require('express').Router()
+const Blog = require('../models/blogs')
+const logger = require('../utils/logger')
+
+blogRouter.get('/', (request, response) => {
+    Blog.find({}).then((blogs) => {
+        response.json(blogs)
+    })
+})
+
+blogRouter.post('/', (request, response) => {
+    logger.log('Received at Post /', request)
+    const blog = new Blog(request.body)
+    blog.save().then((result) => {
+        response.status(201).json(result)
+    })
+})
+
+module.exports = blogRouter
