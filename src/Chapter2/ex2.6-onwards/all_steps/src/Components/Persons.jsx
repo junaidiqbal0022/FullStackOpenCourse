@@ -1,6 +1,6 @@
 import ButtonDelete from "./ButtonDelete";
 const Persons = ({ persons, searchTerm, deletePerson }) => {
-  if (!persons || persons.length === 0) {
+  if (!persons || persons.length === 0 || !Array.isArray(persons)) {
     return <div>No persons to display</div>;
   }
   return (

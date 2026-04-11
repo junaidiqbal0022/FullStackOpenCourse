@@ -49,7 +49,9 @@ const App = () => {
         setPersons(response);
       })
       .catch((error) => {
-        setErrorMessageWithTimeout("failed to fetch data from server ", error);
+        setErrorMessageWithTimeout(
+          `failed to fetch data from server ${error?.response?.data?.error}`,
+        );
       });
   }, []);
   const updatePerson = (personObject) => {
@@ -74,12 +76,12 @@ const App = () => {
         .catch((error) => {
           if (error.response?.status === 404) {
             setErrorMessageWithTimeout(
-              `Person ${personObject.name} was not found on server side.`,
+              `Person ${personObject.name} was not found on server side. ${error?.response?.data?.error}`,
             );
             return true;
           }
           setErrorMessageWithTimeout(
-            `failed to update ${personObject.name} in server`,
+            `failed to update ${personObject.name} in server ${error?.response?.data?.error}`,
           );
           return true;
         });
@@ -101,9 +103,7 @@ const App = () => {
       })
       .catch((error) => {
         console.log(
-          "Error updating persons state after adding new person:",
-          error.response?.status,
-          error.response?.data?.errorCode,
+          `Error updating persons state after adding new person: ${error?.response?.data?.error}`,
         );
 
         if (
@@ -114,13 +114,13 @@ const App = () => {
             `Duplicate entry error for ${personObject.name}, fetching existing data from server`,
           );
           setErrorMessageWithTimeout(
-            `Person with name ${personObject.name} already exists on server.`,
+            `Person with name ${personObject.name} already exists on server. ${error?.response?.data?.error}`,
           );
           getByName(personObject.name)
             .then(async (response) => {
               if (!response) {
                 setErrorMessageWithTimeout(
-                  `Person with name ${personObject.name} not found on server after duplicate entry error.`,
+                  `Person with name ${personObject.name} not found on server after duplicate entry error. ${error?.response?.data?.error}`,
                 );
                 return;
               }
@@ -130,22 +130,21 @@ const App = () => {
                 response,
               ]);
               setErrorMessageWithTimeout(
-                `Person with name ${personObject.name} already exists on server. Updated local data with server data.`,
+                `Person with name ${personObject.name} already exists on server. Updated local data with server data. ${error?.response?.data?.error}`,
               );
               return;
             })
             .catch((error) => {
+              console.log(`some issue: ${error.response.data.error}`);
               setErrorMessageWithTimeout(
-                `Failed to fetch existing person data for ${personObject.name} from server.`,
-              );
-              setErrorMessageWithTimeout(
-                `failed to update local data for ${personObject.name} `,
-                error,
+                `Failed to fetch existing person data for ${personObject.name} from server. ${error?.response?.data?.error}`,
               );
             });
           return;
         } else {
-          setErrorMessageWithTimeout("failed to update local data ", error);
+          setErrorMessageWithTimeout(
+            `failed to update local data ${error?.response?.data?.error}`,
+          );
           return;
         }
       });
@@ -199,11 +198,13 @@ const App = () => {
       .catch((error) => {
         if (error.response?.status === 404) {
           setErrorMessageWithTimeout(
-            `Person ${newName} was not found on server side.`,
+            `Person ${newName} was not found on server side. ${error?.response?.data?.error}`,
           );
           return;
         }
-        setErrorMessageWithTimeout(`failed to delete ${name} from server`);
+        setErrorMessageWithTimeout(
+          `failed to delete ${name} from server ${error?.response?.data?.error}`,
+        );
       });
   };
 

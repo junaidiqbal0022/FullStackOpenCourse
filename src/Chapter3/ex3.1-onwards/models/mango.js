@@ -1,5 +1,5 @@
 const { Person, generateId } = require('./dbModel');
-
+const opts = { runValidators: true };
 
 async function getData() {
     var per = await Person.find({});
@@ -63,7 +63,7 @@ async function writeData(person) {
 }
 
 async function updateData(id, name, number) {
-    return Person.updateOne({ id: id }, { name: name, number: number }).then(async (result) => {
+    return Person.updateOne({ id: id }, { name: name, number: number }, opts).then(async (result) => {
         if (result.matchedCount === 0) {
             console.log(`No person found with ID ${id} to update`)
             return null;

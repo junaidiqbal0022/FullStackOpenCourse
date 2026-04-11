@@ -22,7 +22,7 @@ content-type: application/json
 
 {
  "id" : "f15c35ec-0931-44fb-9fa1-81bd4e2ec29f",   
- "name": "Hello World 2",
+ "name": "He",
  "number": "123-456-7890"
 }
 ###
@@ -31,16 +31,16 @@ content-type: application/json
 
 {
  "id" : "f15c35ec-0931-44fb-9fa1-81bd4e2ec29f",   
- "name": "Hello World 2",
- "number": "123-456-7890"
+ "name": "October",
+ "number": "123-4567890-"
 }
 ###
-PUT http://localhost:3001/api/persons/2
+PUT http://localhost:3001/api/persons/f162ddec-143d-4055-8adb-a334eb4c62b7
 content-type: application/json
 
 {
- "name": "Hello World 2",
- "number": "123-456-7890"
+ "name": "Hello",
+ "number": "13-456-7890"
 }
 ###
 PUT http://localhost:3001/api/persons/update/2

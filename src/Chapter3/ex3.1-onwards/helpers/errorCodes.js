@@ -37,7 +37,7 @@ const errorHandler = (error, request, response, next) => {
     else if (error.name === ErrorCode.ValidationError) {
         return response.status(400).json({
             errorCode: ErrorCode.ValidationError,
-            error: 'Validation failed', message: error.message
+            error: 'Validation failed ' + error.message
         })
     }
     else if (error.name === ErrorCode.IdNotFound) {
