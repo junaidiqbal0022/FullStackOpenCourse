@@ -36,7 +36,7 @@ if (!url || url.trim() === '') {
     console.error('MONGODB_URI environment variable is not set. Please set it to connect to the database.');
     process.exit(1);
 }
-console.log('Connecting to MongoDB with URL:', url)
+//console.log('Connecting to MongoDB with URL:', url)
 mongoose.connect(url)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => {
