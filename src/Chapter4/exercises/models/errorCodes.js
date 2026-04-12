@@ -7,6 +7,11 @@ const ErrorCode = Object.freeze({
     InternalServerError: 'InternalServerError',
     DuplicateEntry: 'DuplicateEntry',
     RedirectPurposeful: 'RedirectPurposeful',
+    MongoServerError: 'MongoServerError',
+    JsonWebTokenError: 'JsonWebTokenError',
+    TypeError: 'TypeError',
+    TokenExpiredError: 'TokenExpiredError',
+    InvalidToken: 'InvalidToken'
 })
 
 module.exports = ErrorCode

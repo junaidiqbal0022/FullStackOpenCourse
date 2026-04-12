@@ -1,6 +1,7 @@
 var morgan = require('morgan')
 var ErrorCode = require('../models/errorCodes')
 const logger = require('./logger')
+const config = require('./config')
 morgan(':method :url :status :request - :response-time ms')
 
 var requstLogger = (request, response, next) => {
@@ -20,8 +21,8 @@ const unknownEndpoint = (request, response) => {
     response.status(404).send({
         errorCode: 404,
         error:
-      'Well Hello there, where are you going?' +
-      ' we have nothing to show you! try next door',
+            'Well Hello there, where are you going?' +
+            ' we have nothing to show you! try next door',
     })
 }
 
@@ -67,9 +68,38 @@ const errorHandler = (error, request, response, next) => {
             errorCode: ErrorCode.RedirectPurposeful,
             error: error.message ?? 'Resource has been moved to another endpoint',
         })
-    } else {
-        next(error)
+    } else if (error.name === ErrorCode.MongoServerError && error.message.includes('E11000 duplicate key error')) {
+        return response.status(400).json({
+            errorCode: ErrorCode.MongoServerError,
+            error: 'expected `username` to be unique'
+        })
     }
+    else if (error.name === ErrorCode.JsonWebTokenError) {
+        return response.status(401).json({
+            errorCode: ErrorCode.JsonWebTokenError,
+            error: 'token invalid'
+        })
+    } else if (error.name === ErrorCode.TokenExpiredError) {
+        return response.status(401).json({
+            error: 'token expired'
+        })
+    }
+    else if (error.name === ErrorCode.InvalidToken) {
+        return response.status(401).json({
+            errorCode: ErrorCode.InvalidToken,
+            error: error.message
+        })
+    }
+    else if (error.name === ErrorCode.TypeError) {
+        return response.status(401).json({
+            errorCode: ErrorCode.TypeError,
+            error: config.NodeEnv === 'test'
+                ? error.message
+                : 'There are some internal errors, contact the developer who made this shit'
+        })
+    }
+
+    next(error)
 }
 
 module.exports = { requstLogger, unknownEndpoint, errorHandler }

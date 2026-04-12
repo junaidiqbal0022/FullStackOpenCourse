@@ -1,5 +1,5 @@
 const Blogs = require('../models/blogs')
-
+const User = require('../models/user')
 const sampleBlogs = [
     {
         title: 'React patterns',
@@ -52,8 +52,14 @@ const dataInDb = async () => {
     return notes.map((note) => note.toJSON())
 }
 
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(u => u.toJSON())
+}
+
 module.exports = {
     sampleBlogs,
     nonExistingId,
     dataInDb,
+    usersInDb
 }
