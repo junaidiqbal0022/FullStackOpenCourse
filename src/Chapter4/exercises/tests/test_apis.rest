@@ -18,3 +18,15 @@ content-type: application/json
  "title": "nma"
 }
 ###
+DELETE http://localhost:3001/api/blogs/69dbaa34e2788e0ea5c09f83
+###
+PUT http://localhost:3001/api/blogs/69dbabc18438e3b3f8ca87f7
+content-type: application/json
+
+{
+ "title": "nma is nma but it is not",
+  "author": "nma",
+  "url": "nma",
+  "likes": 4
+}
+###
