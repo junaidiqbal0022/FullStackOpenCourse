@@ -11,6 +11,23 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "index.js",
       "cwd": "${workspaceFolder}/src/Chapter3/ex3.1-onwards"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Chapter4",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "index.js",
+      "cwd": "${workspaceFolder}/src/Chapter4/exercises"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Test File",
+      "program": "${file}",
+      "runtimeArgs": ["--test"],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/src/Chapter4/exercises"
     }
   ]
 }

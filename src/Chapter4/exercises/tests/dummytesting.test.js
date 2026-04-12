@@ -18,8 +18,8 @@ describe('total likes', () => {
             author: 'Edsger W. Dijkstra',
             url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
             likes: 5,
-            __v: 0
-        }
+            __v: 0,
+        },
     ]
 
     test('when list has only one blog, equals the likes of that', () => {
@@ -29,9 +29,7 @@ describe('total likes', () => {
 
     test(`when list has only ${blogs.length} blog, equals the likes of that`, () => {
         var total = 0
-        blogs.forEach(item =>
-            total += item.likes
-        )
+        blogs.forEach((item) => (total += item.likes))
         const result = listHelper.totalLikes(blogs)
         assert.strictEqual(result, total)
     })
@@ -45,18 +43,24 @@ describe('favorite blog', () => {
 })
 describe('most busy author', () => {
     test('most blogs by', () => {
-        assert.deepStrictEqual({
-            author: 'Robert C. Martin',
-            blogs: 3
-        }, listHelper.mostBlogs(blogs))
+        assert.deepStrictEqual(
+            {
+                author: 'Robert C. Martin',
+                blogs: 3,
+            },
+            listHelper.mostBlogs(blogs),
+        )
     })
 })
 
 describe('favorite author', () => {
     test('favorite author is', () => {
-        assert.deepStrictEqual({
-            author: 'Edsger W. Dijkstra',
-            likes: 17
-        }, listHelper.favoriteAuthor(blogs))
+        assert.deepStrictEqual(
+            {
+                author: 'Edsger W. Dijkstra',
+                likes: 17,
+            },
+            listHelper.favoriteAuthor(blogs),
+        )
     })
 })

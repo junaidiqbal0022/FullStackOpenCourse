@@ -25,12 +25,15 @@ const mostBlogs = (blogs) => {
     if (!blogs || blogs.length === 0) {
         return
     }
-    return lodash(blogs).chain()
-        .groupBy(x => x.author)
+    return lodash(blogs)
+        .chain()
+        .groupBy((x) => x.author)
         .map((items, author) => ({
             author,
-            blogs: items.length
-        })).maxBy(b => b.blogs).value()
+            blogs: items.length,
+        }))
+        .maxBy((b) => b.blogs)
+        .value()
 }
 
 const favoriteAuthor = (blogs) => {
@@ -39,12 +42,13 @@ const favoriteAuthor = (blogs) => {
     }
     return lodash(blogs)
         .chain()
-        .groupBy(item => item.author)
+        .groupBy((item) => item.author)
         .map((items, author) => ({
             author,
-            likes: lodash.sumBy(items, item => item.likes)
-        })).maxBy(item => item.likes).value()
-
+            likes: lodash.sumBy(items, (item) => item.likes),
+        }))
+        .maxBy((item) => item.likes)
+        .value()
 }
 
 module.exports = {
@@ -52,5 +56,5 @@ module.exports = {
     totalLikes,
     favoriteBlog,
     mostBlogs,
-    favoriteAuthor
+    favoriteAuthor,
 }

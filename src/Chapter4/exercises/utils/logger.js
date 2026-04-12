@@ -1,20 +1,26 @@
+const configs = require('./config')
 function error(...message) {
-  console.error(...message)
+    if (configs.NODE_ENV === 'test') return
+    console.error(...message)
 }
 
 function warn(...message) {
-  console.warn(...message)
+    if (configs.NODE_ENV === 'test') return
+    console.warn(...message)
 }
 
 function trace(...message) {
-  console.trace(...message)
+    if (configs.NODE_ENV === 'test') return
+    console.trace(...message)
 }
 
 function log(...message) {
-  console.log(...message)
+    if (configs.NODE_ENV === 'test') return
+    console.log(...message)
 }
 function info(...message) {
-  console.info(...message)
+    if (configs.NODE_ENV === 'test') return
+    console.info(...message)
 }
 
 module.exports = { error, warn, trace, log, info }

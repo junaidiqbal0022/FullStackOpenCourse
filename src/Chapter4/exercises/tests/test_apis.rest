@@ -11,3 +11,10 @@ content-type: application/json
   "likes": 2
 }
 ###
+POST http://localhost:3001/api/blogs
+content-type: application/json
+
+{
+ "title": "nma"
+}
+###
