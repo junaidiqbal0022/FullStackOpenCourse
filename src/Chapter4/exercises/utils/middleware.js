@@ -28,6 +28,8 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
     logger.error('hello from error handler', error.name, error.message)
+
+
     if (error.name === ErrorCode.CasctError) {
         return response.status(400).send({
             errorCode: ErrorCode.CastError,
@@ -68,6 +70,12 @@ const errorHandler = (error, request, response, next) => {
             errorCode: ErrorCode.RedirectPurposeful,
             error: error.message ?? 'Resource has been moved to another endpoint',
         })
+    }
+    else if (error.name === ErrorCode.InsufficientPrivilages) {
+        return response.status(403).json({
+            errorCode: ErrorCode.InsufficientPrivilages,
+            error: error.message ?? 'Resource has been moved to another endpoint',
+        })
     } else if (error.name === ErrorCode.MongoServerError && error.message.includes('E11000 duplicate key error')) {
         return response.status(400).json({
             errorCode: ErrorCode.MongoServerError,
@@ -99,7 +107,11 @@ const errorHandler = (error, request, response, next) => {
         })
     }
 
-    next(error)
+    return response.status(500).json({
+        errorCode: ErrorCode.InternalServerError,
+        error: error.message
+    })
+
 }
 
 module.exports = { requstLogger, unknownEndpoint, errorHandler }

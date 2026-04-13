@@ -11,7 +11,8 @@ const ErrorCode = Object.freeze({
     JsonWebTokenError: 'JsonWebTokenError',
     TypeError: 'TypeError',
     TokenExpiredError: 'TokenExpiredError',
-    InvalidToken: 'InvalidToken'
+    InvalidToken: 'InvalidToken',
+    InsufficientPrivilages: 'InsufficientPrivilages'
 })
 
 module.exports = ErrorCode

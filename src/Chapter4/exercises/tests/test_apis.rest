@@ -1,12 +1,15 @@
 ###
 GET http://localhost:3001/api/blogs
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2OWRiZGNhMDVhOWIzZWQ4NjBiYWMzMzkiLCJpYXQiOjE3NzYwOTEzNDgsImV4cCI6MTc3NjA5NDk0OH0.X-Q7QGrVRBACI0EuLloHYnKxruUTFlb2cpLVu-7EQz0
+
 ###
 POST http://localhost:3001/api/blogs
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2OWRiZGNhMDVhOWIzZWQ4NjBiYWMzMzkiLCJpYXQiOjE3NzYwMTc4NjJ9.naK5BHpmgn96qMb_DfhE0T2m5SWKJwZSoe4b-5YfQOE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2OWRiZGNhMDVhOWIzZWQ4NjBiYWMzMzkiLCJpYXQiOjE3NzYwOTEzNDgsImV4cCI6MTc3NjA5NDk0OH0.X-Q7QGrVRBACI0EuLloHYnKxruUTFlb2cpLVu-7EQz0
 
 { 
- "title": "nma",
+ "title": "nma 2",
   "author": "nma",
   "url": "nma",
   "likes": 2
@@ -19,10 +22,12 @@ content-type: application/json
  "title": "nma"
 }
 ###
-DELETE http://localhost:3001/api/blogs/69dbaa34e2788e0ea5c09f83
+DELETE http://localhost:3001/api/blogs/69dbe2cd6a5b64329906c820
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2OWRiZGNhMDVhOWIzZWQ4NjBiYWMzMzkiLCJpYXQiOjE3NzYwOTEzNDgsImV4cCI6MTc3NjA5NDk0OH0.X-Q7QGrVRBACI0EuLloHYnKxruUTFlb2cpLVu-7EQz0
 ###
-PUT http://localhost:3001/api/blogs/69dbabc18438e3b3f8ca87f7
+PUT http://localhost:3001/api/blogs/69dbe2cd6a5b64329906c820
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2OWRiZGNhMDVhOWIzZWQ4NjBiYWMzMzkiLCJpYXQiOjE3NzYwOTEzNDgsImV4cCI6MTc3NjA5NDk0OH0.X-Q7QGrVRBACI0EuLloHYnKxruUTFlb2cpLVu-7EQz0
 
 {
  "title": "nma is nma but it is not",
@@ -33,15 +38,18 @@ content-type: application/json
 ###
 GET http://localhost:3001/api/users
 ###
+DELETE  http://localhost:3001/api/users
+###
 POST http://localhost:3001/api/users
 content-type: application/json
 
 {
- "username": "mluukkai",
+  "username": "mluukkai",
  "name": "Matti Luukkainen",
  "password": "salainen"
 }
 ###
+
 POST http://localhost:3001/api/login
 content-type: application/json
 

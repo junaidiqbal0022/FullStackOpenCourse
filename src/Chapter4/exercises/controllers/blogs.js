@@ -2,47 +2,18 @@ const blogRouter = require('express').Router()
 const Blog = require('../models/blogs')
 const ErrorCode = require('../models/errorCodes')
 const logger = require('../utils/logger')
-const User = require('../models/user')
 const opts = { runValidators: true }
-const config = require('../utils/config')
-//we cheat by copying from lessons
-const jwt = require('jsonwebtoken')
+const validator = require('../utils/tokenvalidator')
 
-/**
- * User or Error
- */
-const getAndValidateToken = async (request) => {
-    const error = new Error('Invalid Token')
-    error.code = ErrorCode.TokenExpiredError
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-        const token = authorization.replace('Bearer ', '')
-        const decodedToken = jwt.verify(token, config.Secret)
-        if (!decodedToken.id) {
-            return {
-                user: null,
-                error: error
-            }
-        }
-        const user = await User.findById(decodedToken.id)
-        return {
-            user: user,
-            error: error
-        }
+
+blogRouter.get('/', async (request, response, next) => {
+    logger.log('Received at Post /', request.body)
+    try {
+        response.json(await validator.getUserWithBlog(request.user))
     }
-    return {
-        user: null,
-        error: error
+    catch (error) {
+        return next(error)
     }
-}
-
-blogRouter.get('/', async (request, response) => {
-
-    const blogs = await Blog.find({}).populate('user', {
-        username: 1,
-        name: 1,
-    })
-    response.json(blogs)
 })
 
 blogRouter.post('/', async (request, response, next) => {
@@ -52,22 +23,25 @@ blogRouter.post('/', async (request, response, next) => {
         return next(error)
     }
     const body = request.body
-    const validate = getAndValidateToken(request)
-    if (validate.error) {
-        return next(validate.error)
+    var user = await validator.getUserWithBlog(request.user)
+    logger.info(user)
+    try {
+        const blog = new Blog({
+            title: body.title,
+            author: body.author,
+            url: body.url,
+            likes: body.likes ?? 0,
+            user: user._id
+        })
+        const result = await blog.save()
+        user.blogs = user.blogs.concat(result._id)
+        await user.save()
+        response.status(201).json(result)
     }
-    const user = validate.user
-    const blog = new Blog({
-        title: body.title,
-        author: body.author,
-        url: body.url,
-        likes: body.likes ?? 0,
-        user: user._id
-    })
-    const result = await blog.save()
-    user.blogs = user.blogs.concat(result._id)
-    await user.save()
-    response.status(201).json(result)
+    catch (error) {
+        next(error)
+    }
+
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {
@@ -76,6 +50,12 @@ blogRouter.delete('/:id', async (request, response, next) => {
         const err = new Error('Id is missing')
         err.nmae = ErrorCode.ValidationError
         return next(err)
+    }
+    const user = await validator.getUserWithBlog(request.user)
+    if (!user.blogs.some(f => f._id.toString() === request.params.id)) {
+        var error = new Error('You do not have persmissions to delete this')
+        error.name = ErrorCode.InsufficientPrivilages
+        return next(error)
     }
     await Blog.deleteOne({ _id: request.params.id })
     response.status(204).end()
@@ -88,6 +68,12 @@ blogRouter.put('/:id', async (request, response, next) => {
         err.nmae = ErrorCode.ValidationError
         next(err)
     }
+    const user = await validator.getUserWithBlog(request.user)
+    if (!user.blogs.some(f => f._id.toString() === request.params.id)) {
+        var error = new Error('You do not have persmissions to delete this')
+        error.name = ErrorCode.InsufficientPrivilages
+        return next(error)
+    }
     var reqBody = request.body
     const result = await Blog.updateOne(
         { _id: request.params.id },
@@ -98,13 +84,14 @@ blogRouter.put('/:id', async (request, response, next) => {
             likes: reqBody.likes
         },
         opts)
+
     logger.log('result is ', result)
     if (result.matchCount === 0) {
         var err = new Error('id not found')
         err.name = ErrorCode.IdNotFound
         return next(err)
     }
-    response.status(201).json(result)
+    response.status(204).end()
 })
 function isValid(requestBody) {
     if (!requestBody) {
