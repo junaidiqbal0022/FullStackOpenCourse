@@ -1,9 +1,9 @@
-import { useState } from "react";
-import BlogForm from "./BlogForm";
+import { useState } from 'react'
+import BlogForm from './BlogForm'
 const ToggleBlogForm = ({ bloServices, blogs, setBlogs }) => {
-  const [formvisible, setFormvisible] = useState(false);
-  const showCreateButton = { display: formvisible ? "none" : "" };
-  const showForm = { display: formvisible ? "" : "none" };
+  const [formvisible, setFormvisible] = useState(false)
+  const showCreateButton = { display: formvisible ? 'none' : '' }
+  const showForm = { display: formvisible ? '' : 'none' }
 
   return (
     <>
@@ -22,7 +22,7 @@ const ToggleBlogForm = ({ bloServices, blogs, setBlogs }) => {
         </button>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ToggleBlogForm;
+export default ToggleBlogForm
