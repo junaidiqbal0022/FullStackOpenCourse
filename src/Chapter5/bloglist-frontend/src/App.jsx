@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Blogs from "./components/Blogs";
 import Login from "./components/login";
 import services from "./services/blogs";
-import BlogForm from "./components/BlogForm";
+import ToggleBlogForm from "./components/ToggleBlogForm";
 
 const App = () => {
   const [user, setUser] = useState();
@@ -32,7 +32,11 @@ const App = () => {
           ) : (
             "No user logged in, you should not be seeing this page at all"
           )}
-          <BlogForm blogs={blogs} setBlogs={setBlogs} bloServices={services} />
+          <ToggleBlogForm
+            blogs={blogs}
+            setBlogs={setBlogs}
+            bloServices={services}
+          />
           <Blogs
             user={user}
             blogs={blogs}
