@@ -7,8 +7,9 @@ const userRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const configs = require('./utils/config')
 const tokenVerifier = require('./utils/tokenvalidator')
+const cors = require('cors')
 const app = express()
-
+app.use(cors())
 const url = configs.MongoDb_Url
 logger.info(url)
 mongoose
