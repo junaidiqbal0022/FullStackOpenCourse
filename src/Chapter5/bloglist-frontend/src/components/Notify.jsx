@@ -5,7 +5,12 @@ const Notify = ({ msg, color }) => {
   }
   return (
     <>
+      <style>{`
+        .error {
+        }
+      `}</style>
       <h4
+        className="error"
         style={{
           color: color ?? "red",
           backgroundColor: "rgba(175,250,250,0.5)",

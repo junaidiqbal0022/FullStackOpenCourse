@@ -7,9 +7,12 @@ const MongoDb_Url =
 const Port = process.env.PORT || 3001
 const Secret = process.env.SECRET
 const NodeEnv = process.env.NODE_ENV
+const TestEnv = process.env.NODE_ENV === 'test'
+
 module.exports = {
     MongoDb_Url,
     Port,
     Secret,
-    NodeEnv
+    NodeEnv,
+    TestEnv
 }

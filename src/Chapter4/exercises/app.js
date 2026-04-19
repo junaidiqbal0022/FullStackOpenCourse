@@ -7,6 +7,7 @@ const userRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const configs = require('./utils/config')
 const tokenVerifier = require('./utils/tokenvalidator')
+const resetRouter = require('./controllers/testing')
 const cors = require('cors')
 const app = express()
 app.use(cors())
@@ -26,7 +27,9 @@ app.use(express.json())
 app.use(middleware.requstLogger)
 app.use('/api/login', loginRouter)
 app.use('/api/users', userRouter)
-
+if (configs.TestEnv) {
+    app.use('/api/reset', resetRouter)
+}
 app.use(tokenVerifier.getAndDecodeToken)
 app.use('/api/blogs', blogRouter)
 
