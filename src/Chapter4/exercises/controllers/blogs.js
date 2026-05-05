@@ -16,7 +16,7 @@ blogRouter.get('/', async (request, response, next) => {
     }
 })
 
-blogRouter.post('/', async (request, response, next) => {
+blogRouter.post('/userBlogs', async (request, response, next) => {
     logger.log('Received at Post /', request.body)
     var error = isValid(request.body)
     if (error) {
@@ -68,20 +68,17 @@ blogRouter.put('/:id', async (request, response, next) => {
         err.nmae = ErrorCode.ValidationError
         next(err)
     }
-    const user = await validator.getUserWithBlog(request.user)
-    if (!user.blogs.some(f => f._id.toString() === request.params.id)) {
-        var error = new Error('You do not have persmissions to delete this')
-        error.name = ErrorCode.InsufficientPrivilages
-        return next(error)
-    }
+    // const user = await validator.getUserWithBlog(request.user)
+    // if (!user.blogs.some(f => f._id.toString() === request.params.id)) {
+    //     var error = new Error('You do not have persmissions to like this')
+    //     error.name = ErrorCode.InsufficientPrivilages
+    //     return next(error)
+    // }
     var reqBody = request.body
     const result = await Blog.updateOne(
         { _id: request.params.id },
         {
-            title: reqBody.title,
-            author: reqBody.author,
-            url: reqBody.url,
-            likes: reqBody.likes
+            $inc: { likes: 1 }
         },
         opts)
 

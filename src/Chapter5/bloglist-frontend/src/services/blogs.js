@@ -11,7 +11,7 @@ const getHeader = () => ({
 })
 
 const getAll = async () => {
-  const res = await axios.get(`${baseUrl}/blogs`, getHeader())
+  const res = await axios.get(`${baseUrl}/blogs`)
   return res.data
 }
 
@@ -31,7 +31,7 @@ const create = async (author, title, url) => {
     author: author,
     title: title,
     url: url,
-    likes: 1000,
+    likes: 0,
   }
   const res = await axios.post(`${baseUrl}/blogs`, blog, getHeader())
   return res.data

@@ -1,10 +1,15 @@
 import { useState, useRef } from "react";
 import Notify from "./Notify";
-
-const Blog = ({ blog, blogServices, setBlogs, setErrorWithTimeout }) => {
+import { useParams, useNavigate } from "react-router-dom";
+const Blog = ({ blog, user, blogServices, setBlogs, setErrorWithTimeout }) => {
+  if (!blog) {
+    return <>Blog With Id Not Found</>;
+  }
+  const nav = useNavigate();
+  const id = useParams().id;
   const [error, setError] = useState("");
   const [color, setColor] = useState("red");
-  const [fullyvisible, setFullyvisible] = useState(false);
+  // const [fullyvisible, setFullyvisible] = useState(false);
   const errorWithTimeout = (msg, color = "green") => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -15,11 +20,11 @@ const Blog = ({ blog, blogServices, setBlogs, setErrorWithTimeout }) => {
       setError("");
     }, 5000);
   };
-  let fullStyle = { display: fullyvisible ? "" : "none" };
-  let titleStyle = {
-    display: fullyvisible ? "none" : "flex",
-    gap: 10,
-  };
+  // let fullStyle = { display: fullyvisible ? "" : "none" };
+  // let titleStyle = {
+  //   display: fullyvisible ? "none" : "flex",
+  //   gap: 10,
+  // };
   const timeoutRef = useRef(null);
   const onClickDelete = async () => {
     console.log("We gonna delete some blogs");
@@ -44,6 +49,7 @@ const Blog = ({ blog, blogServices, setBlogs, setErrorWithTimeout }) => {
           .filter((b) => b.id !== blog.id)
           .sort((a, b) => b.likes - a.likes),
       }));
+      nav("/");
     } catch (err) {
       console.log("error in delete: ", err);
       setError(`Error: ${err.name} ${err.message}`);
@@ -83,30 +89,43 @@ const Blog = ({ blog, blogServices, setBlogs, setErrorWithTimeout }) => {
     }
   };
   return (
-    <>
+    <div style={{ marginTop: 20 }}>
       <Notify msg={error} color={color} />
-      <div style={titleStyle}>
+      {/* <div style={titleStyle}>
         {blog.title} by {blog.author}
         <button onClick={() => setFullyvisible(!fullyvisible)}>View</button>
       </div>
-      <div style={fullStyle}>
-        <div style={{ display: "flex", gap: 10 }}>
-          Id: {blog.id}
-          <button onClick={() => setFullyvisible(!fullyvisible)}>Hide</button>
-        </div>
-        Title: {blog.title}
-        <br />
-        Author: {blog.author}
-        <br />
-        Link:{blog.url}
-        <br />
-        Likes: {blog.likes} <button onClick={onLikeClick}>Like</button>
-        <br />
-        <button style={{ marginTop: 10 }} onClick={onClickDelete}>
+      <div style={fullStyle}> */}
+      <div style={{ display: "flex", gap: 10 }}>
+        Id: {blog.id}
+        {/* <button onClick={() => setFullyvisible(!fullyvisible)}>Hide</button> */}
+        <button onClick={() => nav("/")}>Hide</button>
+      </div>
+      Title: {blog.title}
+      <br />
+      Author: {blog.author}
+      <br />
+      Link:{blog.url}
+      <br />
+      Likes: {blog.likes}
+      {user && blog && user.id !== blog.user && (
+        <>
+          <button style={{ marginLeft: 10 }} onClick={onLikeClick}>
+            Like
+          </button>
+        </>
+      )}
+      <br />
+      {user && blog && user.id === blog.user && (
+        <button
+          style={{ marginTop: 10, marginLeft: 10 }}
+          onClick={onClickDelete}
+        >
           Remove
         </button>
-      </div>
-    </>
+      )}
+      {/* </div> */}
+    </div>
   );
 };
 

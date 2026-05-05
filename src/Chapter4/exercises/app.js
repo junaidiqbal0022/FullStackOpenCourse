@@ -3,6 +3,7 @@ const express = require('express')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blogs')
+const unAuthblogRouter = require('./controllers/blogsUnAth')
 const userRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const configs = require('./utils/config')
@@ -27,6 +28,8 @@ app.use(express.json())
 app.use(middleware.requstLogger)
 app.use('/api/login', loginRouter)
 app.use('/api/users', userRouter)
+app.use('/api/blogs', unAuthblogRouter)
+
 if (configs.TestEnv) {
     app.use('/api/reset', resetRouter)
 }

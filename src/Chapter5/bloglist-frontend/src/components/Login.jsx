@@ -1,7 +1,9 @@
 import { useState } from "react";
 import services from "../services/blogs";
 import Notify from "./Notify";
+import { useNavigate } from "react-router-dom";
 const Login = ({ setUser }) => {
+  const nav = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,6 +13,7 @@ const Login = ({ setUser }) => {
       const user = await services.login(username, password);
       console.log(`got ${user} with ${username} and  ${password}`);
       setUser(user);
+      nav("/");
     } catch (err) {
       console.log(`error ${err}`);
       setError(`Error: ${err.name} ${err.message}`);

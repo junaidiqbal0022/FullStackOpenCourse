@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Notify from "./Notify";
-
+import { useNavigate } from "react-router-dom";
 const BlogForm = ({ bloServices, blogs, setBlogs }) => {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [author, setAuthor] = useState("");
   const [error, setError] = useState("");
   const [color, setColor] = useState("");
+  const nav = useNavigate();
   const onFormSubmit = async (e) => {
     e.preventDefault();
     if (!author?.trim()) {
@@ -49,6 +50,7 @@ const BlogForm = ({ bloServices, blogs, setBlogs }) => {
       setAuthor("");
       setTitle("");
       setUrl("");
+      nav("/");
     } catch (err) {
       console.log("error", err);
       setColor("red");

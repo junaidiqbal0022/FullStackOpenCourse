@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Blog from "./Blog";
 import Notify from "./Notify";
-
+import { Link } from "react-router-dom";
 const Blogs = ({ blogService, blogs, setBlogs }) => {
   const [error, setError] = useState();
   const [color, setColor] = useState("red");
@@ -14,7 +14,7 @@ const Blogs = ({ blogService, blogs, setBlogs }) => {
         console.log("getall", data);
         const dataSorted = {
           ...data,
-          blogs: data.blogs.sort((a, b) => b.likes - a.likes),
+          blogs: data.sort((a, b) => b.likes - a.likes),
         };
 
         setBlogs(dataSorted);
@@ -45,12 +45,7 @@ const Blogs = ({ blogService, blogs, setBlogs }) => {
 
       {blogs?.blogs?.length > 0 ? (
         <>
-          <h3>
-            {blogs.name +
-              " has written total of: " +
-              blogs.blogs.length +
-              " blogs."}
-          </h3>
+          <h3>Blogs</h3>
           <hr
             style={{
               border: "1px solid #000000",
@@ -70,12 +65,15 @@ const Blogs = ({ blogService, blogs, setBlogs }) => {
           >
             {blogs.blogs.map((blog) => (
               <div key={blog.id}>
-                <Blog
+                {/* <Blog
                   setErrorWithTimeout={setErrorWithTimeout}
                   blog={blog}
                   blogServices={blogService}
                   setBlogs={setBlogs}
-                />
+                /> */}
+                <Link to={`/blogs/${blog.id}`}>
+                  {blog.title} by {blog.author}
+                </Link>
                 <hr
                   style={{
                     border: "1px solid #ddd",
