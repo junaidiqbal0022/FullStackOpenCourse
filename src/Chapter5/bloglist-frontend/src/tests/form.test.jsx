@@ -7,6 +7,8 @@ import { vi } from "vitest";
 import services from "../services/blogs";
 import { useState } from "react";
 import userEvent from '@testing-library/user-event'
+import { BrowserRouter as Router } from "react-router-dom";
+
 afterEach(() => {
   cleanup();
 });
@@ -43,14 +45,22 @@ describe("toggleable", () => {
       />,
     );
   }
-  test("renders its children", () => {
-     render(<Wrapper />);
+  test("renders its children", async () => {
+     await render(
+  <Router>
+    <Wrapper />
+  </Router>
+);
      screen.debug()
     screen.getByText("Create new Blog");
   }); 
   
   test("Open form",async () => {
-     render(<Wrapper />);
+        await render(
+  <Router>
+    <Wrapper />
+  </Router>,
+);
 
     const user = userEvent.setup()
     
@@ -60,7 +70,11 @@ describe("toggleable", () => {
 
   });
   test("Open and submit form", async() => {
-     render(<Wrapper />);
+       await render(
+  <Router>
+    <Wrapper />
+  </Router>,
+);
     screen.debug()
 
     const user = userEvent.setup()
@@ -74,7 +88,11 @@ describe("toggleable", () => {
   });
   
   test("Submit Successfully", async() => {
-     render(<Wrapper />);
+       await render(
+  <Router>
+    <Wrapper />
+  </Router>,
+);
 
     const user = userEvent.setup()
     
@@ -94,7 +112,11 @@ describe("toggleable", () => {
   });
   
 test("Validate Create Args", async() => {
-    render(<Wrapper />);
+       await render(
+  <Router>
+    <Wrapper />
+  </Router>,
+);
     
         const user = userEvent.setup()
         
