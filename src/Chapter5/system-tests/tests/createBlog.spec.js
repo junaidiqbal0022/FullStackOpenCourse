@@ -11,7 +11,7 @@ test.describe('Blog Tests', () => {
     })
 
     test('Create Form is hidden', async ({ page }) => {
-        await expect(page.getByRole("button", { name: "Create new Blog" })).toBeVisible()
+        await expect(page.getByRole("link", { name: "Create Blog" })).toBeVisible()
     });
     test('Create Blog', async ({ page }) => {
         const blog = helper.blog
@@ -21,13 +21,13 @@ test.describe('Blog Tests', () => {
         await helper.verifyExpendedBlog(page, blog.title, blog.author, blog.url);
     });
 
-    test('Like Thee blog, you self liker', async ({ page }) => {
+    test('Like Thee blog, SelfLike Not Accepted', async ({ page }) => {
         const blog = helper.blog
         await helper.noBlog(page);
         await helper.createBlog(page)
         await helper.verifyUnOpenedBlog(page, blog.title, blog.author, blog.url);
         await helper.verifyExpendedBlog(page, blog.title, blog.author, blog.url);
-        await helper.likeBlog(page)
+        await helper.selfLikeBlog(page)
     });
 
     test('Delete Thee blog', async ({ page }) => {
@@ -48,7 +48,8 @@ test.describe('Blog Tests', () => {
         await helper.logout(page)
         await helper.createUser(page, "meeee", "myyyy")
         await helper.loginUser(page, "meeee", "myyyy")
-        await helper.noBlog(page);
+        await helper.verifyExpendedBlog(page, blog.title, blog.author, blog.url);
+        await expect(page.getByRole('button', { name: "Remove" })).not.toBeVisible();
 
     });
 
@@ -56,22 +57,33 @@ test.describe('Blog Tests', () => {
         const blog = helper.blog
         await helper.noBlog(page);
         await helper.createBlog(page)
+        await helper.logout(page)
+        await helper.createUser(page, "meeee", "myyyy")
+        await helper.loginUser(page, "meeee", "myyyy")
         await helper.verifyUnOpenedBlog(page, blog.title, blog.author, blog.url);
         await helper.verifyExpendedBlog(page, blog.title, blog.author, blog.url);
         await helper.likeBlog(page)
         await page.pause()
-        await helper.cancelForm(page)
-
-        await helper.createBlog(page, {
+        const blogTest = {
             author: 'my name',
             title: "your name",
-            likes: 100000,
+            likes: 0,
             url: "somthing:3000"
-        })
-        await helper.verifyUnOpenedBlog(page, "your name", 'my name', "somthing:3000")
-        await helper.blogsOrder(page)
-
-
+        }
+        await helper.createBlog(page, blogTest)
+        await helper.verifyUnOpenedBlog(page, blogTest.title, blogTest.author, blogTest.url)
+        await helper.logout(page)
+        await helper.loginUser(page, 'root', 'root')
+        await helper.verifyExpendedBlog(page, blogTest.title, blogTest.author, blogTest.url);
+        await helper.likeBlog(page)
+        await helper.likeBlog(page)
+        await helper.likeBlog(page)
+        await helper.likeBlog(page)
+        await helper.likeBlog(page)
+        await helper.likeBlog(page)
+        await helper.likeBlog(page)
+        await page.getByRole('link', { name: "Home" }).click()
+        await helper.blogsOrder(page, blogTest, blog)
 
     });
 

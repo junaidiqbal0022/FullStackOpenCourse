@@ -31,6 +31,7 @@ app.use('/api/users', userRouter)
 app.use('/api/blogs', unAuthblogRouter)
 
 if (configs.TestEnv) {
+    console.log('Test Env....')
     app.use('/api/reset', resetRouter)
 }
 app.use(tokenVerifier.getAndDecodeToken)

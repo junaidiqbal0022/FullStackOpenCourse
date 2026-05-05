@@ -6,7 +6,7 @@ const opts = { runValidators: true }
 const validator = require('../utils/tokenvalidator')
 
 
-blogRouter.get('/', async (request, response, next) => {
+blogRouter.get('/userBlogs', async (request, response, next) => {
     logger.log('Received at Post /', request.body)
     try {
         response.json(await validator.getUserWithBlog(request.user))
@@ -16,7 +16,7 @@ blogRouter.get('/', async (request, response, next) => {
     }
 })
 
-blogRouter.post('/userBlogs', async (request, response, next) => {
+blogRouter.post('/', async (request, response, next) => {
     logger.log('Received at Post /', request.body)
     var error = isValid(request.body)
     if (error) {
