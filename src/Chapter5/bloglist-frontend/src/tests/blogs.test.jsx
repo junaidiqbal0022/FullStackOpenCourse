@@ -7,7 +7,13 @@ import { vi } from "vitest";
 import { use, useState } from "react";
 import services from "../services/blogs";
 import userEvent from "@testing-library/user-event";
-import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  MemoryRouter as Router,
+  Routes,
+  Route,
+  useNavigate,
+} from "react-router-dom";
+
 import Blog from "../components/Blog";
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const blogs = [
@@ -24,6 +30,7 @@ const blogs = [
 afterEach(() => {
   cleanup();
 });
+
 describe("Blogs renderig", () => {
   beforeEach(() => {
     vi.mock("../services/blogs", () => {

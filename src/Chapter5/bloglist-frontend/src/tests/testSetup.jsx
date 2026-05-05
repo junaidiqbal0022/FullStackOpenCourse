@@ -6,6 +6,12 @@ import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 import services from "../services/blogs";
 import { useState } from "react";
+import {
+  MemoryRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 afterEach(() => {
   cleanup();
 });
@@ -31,16 +37,27 @@ describe("toggleable", () => {
   function Wrapper() {
     const [blogs, setBlogs] = useState([]);
 
-    return(
-      <ToggleBlogForm
-        bloServices={services}
-        blogs={blogs}
-        setBlogs={setBlogs}
-      />,
+    return (
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ToggleBlogForm
+              bloServices={services}
+              blogs={blogs}
+              setBlogs={setBlogs}
+            />
+          }
+        />
+      </Routes>
     );
   }
   test("renders its children", () => {
-     render(<Wrapper />);
+    render(
+      <Router>
+        <Wrapper />
+      </Router>,
+    );
     screen.getByText("Create new Blog");
   });
 });

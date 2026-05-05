@@ -6,8 +6,13 @@ import { render, screen } from "@testing-library/react";
 import { vi } from "vitest";
 import services from "../services/blogs";
 import { useState } from "react";
-import userEvent from '@testing-library/user-event'
-import { BrowserRouter as Router } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
+import {
+  MemoryRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 
 afterEach(() => {
   cleanup();
@@ -19,129 +24,130 @@ describe("toggleable", () => {
       return {
         default: {
           getAll: vi.fn(),
-          create: vi.fn().mockImplementation(async(data)=>{
-            return ({
+          create: vi.fn().mockImplementation(async (data) => {
+            return {
               author: data.author,
               id: crypto.randomUUID(),
-              title:data.title,
-              likes:0,
-              url:data.url
-            })
-        })
+              title: data.title,
+              likes: 0,
+              url: data.url,
+            };
+          }),
         },
       };
     });
     services.create.mockClear();
     services.getAll.mockClear();
   });
+
   function Wrapper() {
     const [blogs, setBlogs] = useState([]);
 
-    return(
-      <ToggleBlogForm
-        bloServices={services}
-        blogs={blogs}
-        setBlogs={setBlogs}
-      />,
+    return (
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ToggleBlogForm
+              bloServices={services}
+              blogs={blogs}
+              setBlogs={setBlogs}
+            />
+          }
+        />
+      </Routes>
     );
   }
   test("renders its children", async () => {
-     await render(
-  <Router>
-    <Wrapper />
-  </Router>
-);
-     screen.debug()
+    render(
+      <Router>
+        <Wrapper />
+      </Router>,
+    );
     screen.getByText("Create new Blog");
-  }); 
-  
-  test("Open form",async () => {
-        await render(
-  <Router>
-    <Wrapper />
-  </Router>,
-);
+  });
 
-    const user = userEvent.setup()
-    
+  test("Open form", async () => {
+    render(
+      <Router>
+        <Wrapper />
+      </Router>,
+    );
+
+    const user = userEvent.setup();
+
     const btn = screen.getByText("Create new Blog");
     await user.click(btn);
     const btn2 = screen.getByText("submit the form");
-
   });
-  test("Open and submit form", async() => {
-       await render(
-  <Router>
-    <Wrapper />
-  </Router>,
-);
-    screen.debug()
+  test("Open and submit form", async () => {
+    render(
+      <Router>
+        <Wrapper />
+      </Router>,
+    );
+    screen.debug();
 
-    const user = userEvent.setup()
+    const user = userEvent.setup();
     const btn = screen.getByText("Create new Blog");
     await user.click(btn);
     const btn2 = screen.getByText("submit the form");
-     expect(btn2).toBeVisible()
-    await user.click(btn2)
-    expect(services.create.mock.calls).toHaveLength(0)
-
+    expect(btn2).toBeVisible();
+    await user.click(btn2);
+    expect(services.create.mock.calls).toHaveLength(0);
   });
-  
-  test("Submit Successfully", async() => {
-       await render(
-  <Router>
-    <Wrapper />
-  </Router>,
-);
 
-    const user = userEvent.setup()
-    
+  test("Submit Successfully", async () => {
+    render(
+      <Router>
+        <Wrapper />
+      </Router>,
+    );
+
+    const user = userEvent.setup();
+
     const btn = screen.getByText("Create new Blog");
     await user.click(btn);
     const btn2 = screen.getByText("submit the form");
-     expect(btn2).toBeVisible()
-    const title = screen.getByPlaceholderText("write title here")
-    const author = screen.getByPlaceholderText("write author here")
-    const url = screen.getByPlaceholderText("write url here")
-    await user.type(title, 'testing a form...')
-    await user.type(author, 'testing a form...')
-    await user.type(url, 'testing:3000')
-    await user.click(btn2)
-    expect(services.create.mock.calls).toHaveLength(1)
-
+    expect(btn2).toBeVisible();
+    const title = screen.getByPlaceholderText("write title here");
+    const author = screen.getByPlaceholderText("write author here");
+    const url = screen.getByPlaceholderText("write url here");
+    await user.type(title, "testing a form...");
+    await user.type(author, "testing a form...");
+    await user.type(url, "testing:3000");
+    await user.click(btn2);
+    expect(services.create.mock.calls).toHaveLength(1);
   });
-  
-test("Validate Create Args", async() => {
-       await render(
-  <Router>
-    <Wrapper />
-  </Router>,
-);
-    
-        const user = userEvent.setup()
-        
-        const btn = screen.getByText("Create new Blog");
-        await user.click(btn);
 
-        const btn2 = screen.getByText("submit the form");
-         expect(btn2).toBeVisible()
-        const title = screen.getByPlaceholderText("write title here")
-        const author = screen.getByPlaceholderText("write author here")
-        const url = screen.getByPlaceholderText("write url here")
-        await user.type(title, 'testing a form title...')
-        await user.type(author, 'testing a form...')
-        await user.type(url, 'testing:3000')
-        await user.click(btn2)
-        expect(services.create.mock.calls).toHaveLength(1)
-        //author, title, url
-        console.log(services.create.mock.calls);
-      expect(services.create).toHaveBeenCalledWith(
-            "testing a form...",
-             "testing a form title...",
-            "testing:3000"
-      );
-    
-})
+  test("Validate Create Args", async () => {
+    render(
+      <Router>
+        <Wrapper />
+      </Router>,
+    );
 
+    const user = userEvent.setup();
 
+    const btn = screen.getByText("Create new Blog");
+    await user.click(btn);
+
+    const btn2 = screen.getByText("submit the form");
+    expect(btn2).toBeVisible();
+    const title = screen.getByPlaceholderText("write title here");
+    const author = screen.getByPlaceholderText("write author here");
+    const url = screen.getByPlaceholderText("write url here");
+    await user.type(title, "testing a form title...");
+    await user.type(author, "testing a form...");
+    await user.type(url, "testing:3000");
+    await user.click(btn2);
+    expect(services.create.mock.calls).toHaveLength(1);
+    //author, title, url
+    console.log(services.create.mock.calls);
+    expect(services.create).toHaveBeenCalledWith(
+      "testing a form...",
+      "testing a form title...",
+      "testing:3000",
+    );
+  });
 });
