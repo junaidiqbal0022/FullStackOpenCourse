@@ -1,12 +1,11 @@
 import { useState } from "react";
 import services from "../services/blogs";
-import Notify from "./Notify";
 import { useNavigate } from "react-router-dom";
-const Login = ({ setUser }) => {
+import { Container, Button, TextField } from "@mui/material";
+const Login = ({ setUser, setNotification }) => {
   const nav = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const handleLogin = async (event) => {
     try {
       event.preventDefault();
@@ -16,12 +15,14 @@ const Login = ({ setUser }) => {
       nav("/");
     } catch (err) {
       console.log(`error ${err}`);
-      setError(`Error: ${err.name} ${err.message}`);
-      new Notification(err);
+      setNotification({
+        msg: `Error: ${err.name} ${err.message}`,
+        severity: "error",
+      });
     }
   };
   return (
-    <>
+    <Container style={{ marginLeft: 20 }} align="left" maxWidth="sm">
       <h2>Login</h2>
       <form
         onSubmit={handleLogin}
@@ -32,33 +33,33 @@ const Login = ({ setUser }) => {
         }}
       >
         <div>
-          <label style={{ display: "flex", gap: "10px" }}>
-            Username
-            <input
-              type="text"
-              placeholder="username"
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </label>
+          <TextField
+            required={true}
+            variant="standard"
+            placeholder="UserName"
+            label="UserName"
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
         </div>
         <div>
-          <label style={{ display: "flex", gap: "10px" }}>
-            Password
-            <input
-              type="password"
-              placeholder="password"
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </label>
+          <TextField
+            required={true}
+            variant="standard"
+            type="password"
+            placeholder="Password"
+            label="Password"
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
         </div>
-        <button style={{ width: 200 }} type="submit">
-          login
-        </button>
+        <div>
+          <Button variant="contained" size="small" type="submit">
+            login
+          </Button>
+        </div>
       </form>
-      <Notify msg={error} color="red" />
-    </>
+    </Container>
   );
 };
 

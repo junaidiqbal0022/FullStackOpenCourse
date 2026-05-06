@@ -86,16 +86,15 @@ describe("Blogs renderig", () => {
     screen.debug();
     const user = userEvent.setup();
 
-    const item1 = await screen.findByText(
-      "Blog title is random by Alex watermelon",
-      { exact: false },
-    );
+    const item1 = await screen.findByText("Blog title is random", {
+      exact: false,
+    });
     expect(item1).toBeVisible();
 
     await user.click(item1);
     const item2 = screen.queryByText("localhost:3001/crap");
 
-    expect(item2).toBeNull();
+    expect(item2).toBeVisible();
   });
 
   test("renders opened blog", async () => {
@@ -107,23 +106,22 @@ describe("Blogs renderig", () => {
     await sleep(1000);
 
     const user = userEvent.setup();
-    const btn = await screen.findByText(
-      "Blog title is random by Alex watermelon",
-      { exact: false },
-    );
+    const btn = await screen.findByText("Blog title is random", {
+      exact: false,
+    });
     expect(btn).toBeVisible();
     await user.click(btn);
     await sleep(1000);
     screen.debug();
 
-    const item1 = await screen.findByText("Title: Blog title is random", {
+    const item1 = await screen.findByText("Blog title is random", {
       exact: false,
     });
-    const item2 = await screen.findByText("Link:localhost:3001/crap", {
+    const item2 = await screen.findByText("localhost:3001/crap", {
       exact: false,
     });
-    const item3 = await screen.findByText("Likes: ", { exact: false });
-    const item4 = await screen.findByText("Author: Alex watermelon", {
+    const item3 = await screen.findByText("Likes", { exact: false });
+    const item4 = await screen.findByText("Alex watermelon", {
       exact: false,
     });
 
@@ -142,10 +140,9 @@ describe("Blogs renderig", () => {
     await sleep(1000);
 
     const user = userEvent.setup();
-    const btn = await screen.findByText(
-      "Blog title is random by Alex watermelon",
-      { exact: false },
-    );
+    const btn = await screen.findByText("Blog title is random", {
+      exact: false,
+    });
     expect(btn).toBeVisible();
     await user.click(btn);
     await sleep(1000);

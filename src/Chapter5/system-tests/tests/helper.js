@@ -58,26 +58,26 @@ const openAndLogin = async (page) => {
 const createBlog = async (page, blogs = null) => {
     blogs = blogs ?? blog
     await page.getByRole('link', { name: 'Create Blog' }).click();
-    await page.getByRole('textbox', { name: 'Title:' }).click();
-    await page.getByRole('textbox', { name: 'Title:' }).fill(blogs.title);
-    await page.getByRole('textbox', { name: 'Author:' }).fill(blogs.author);
-    await page.getByRole('textbox', { name: 'Url:' }).fill(blogs.url);
-    await page.getByRole('button', { name: 'submit the form' }).click();
+    await page.getByRole('textbox', { name: 'Title' }).click();
+    await page.getByRole('textbox', { name: 'Title' }).fill(blogs.title);
+    await page.getByRole('textbox', { name: 'Author' }).fill(blogs.author);
+    await page.getByRole('textbox', { name: 'Url' }).fill(blogs.url);
+    await page.getByRole('button', { name: 'Create' }).click();
 }
 const verifyUnOpenedBlog = async (page, title, author, url) => {
-    const text = `${title} by ${author}`;
+    const text = `${title}`;
     await expect(page.getByRole('link', { name: text })).toBeVisible();
 }
 const verifyExpendedBlog = async (page, title, author, url) => {
-    const text = `${title} by ${author}`;
+    const text = `${title}`;
     await page.getByRole('link', { name: text }).click()
-    title = `Title: ${title}`
-    author = `Author: ${author}`
-    url = `Link:${url}`
-    await expect(page.getByText(title)).toBeVisible();
+    title = `${title}`
+    author = `${author}`
+    url = `${url}`
+    await expect(page.getByRole('heading', { name: title })).toBeVisible();
     await expect(page.getByText(author)).toBeVisible();
     await expect(page.getByText(url)).toBeVisible()
-    await expect(page.getByText("Likes:")).toBeVisible()
+    await expect(page.getByText("Likes")).toBeVisible()
 }
 const noBlog = async (page) => {
     await expect(page.getByText('No blogs to Display')).toBeVisible();
@@ -87,7 +87,7 @@ const likeBlog = async (page) => {
     const btn = page.getByRole('button', { name: 'Like' });
     await expect(btn).toBeVisible();
     await btn.click()
-    const errorDiv = page.locator('.error').filter({ hasText: likeText })
+    const errorDiv = page.getByRole('alert').filter({ hasText: likeText })
     await expect(errorDiv).toBeVisible();
     await expect(errorDiv).toHaveText(likeText)
 }
@@ -104,7 +104,7 @@ const deleteBlog = async (page) => {
     const btn = page.getByRole('button', { name: 'Remove' });
     await expect(btn).toBeVisible();
     await btn.click()
-    const errorDiv = page.locator('.error').filter({ hasText: text })
+    const errorDiv = page.getByRole('alert').filter({ hasText: text })
     await expect(errorDiv).toBeVisible();
     await expect(errorDiv).toContainText(text)
 }
@@ -121,14 +121,13 @@ const cancelForm = async (page) => {
 }
 
 const blogsOrder = async (page, first, last) => {
-    const texts = await page.locator("body").allTextContents();
-    const firstBox = await page.getByText(first.title + " by " + first.author)
-    const box1 = await firstBox.boundingBox()
-    console.log(firstBox, box1)
-    const lastBox = await page.getByText(blog.title + " by " + blog.author)
-    const box2 = await lastBox.boundingBox()
-    console.log(lastBox, box2)
-    expect(box1.y).toBeLessThan(box2.y)
+    const texts = await page.locator("tr").allTextContents();
+    console.log(texts)
+    const firstIndex = texts.findIndex(text => text.includes(first.title) && text.includes(first.author))
+    console.log("first index: ", firstIndex)
+    const lastIndex = texts.findIndex(text => text.includes(last.title) && text.includes(last.author))
+    console.log("last index: ", lastIndex)
+    expect(firstIndex).toBeLessThan(lastIndex)
 }
 module.exports = {
     placeHolders,

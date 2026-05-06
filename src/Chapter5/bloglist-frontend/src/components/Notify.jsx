@@ -1,30 +1,29 @@
-const Notify = ({ msg, color }) => {
+import { Alert } from "@mui/material";
+import { useEffect } from "react";
+const Notify = ({ notification, setNotification }) => {
+  const msg = notification?.msg;
+  const severity = notification?.severity || "success";
+  const autoClear = notification?.autoClear ?? true;
   //console.log(`received msg:${msg}, color:${color}`)
   if (!msg || typeof msg !== "string" || msg.trim() === "") {
     return null;
   }
+  useEffect(() => {
+    if (!msg || typeof msg !== "string" || msg.trim() === "") {
+      return;
+    }
+    if (!autoClear) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      setNotification({ msg: "", severity: "success" });
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [notification, setNotification]);
   return (
-    <>
-      <style>{`
-        .error {
-        }
-      `}</style>
-      <h4
-        className="error"
-        style={{
-          color: color ?? "red",
-          backgroundColor: "rgba(175,250,250,0.5)",
-          borderRadius: 3,
-          border: "1px solid black",
-          flex: 1,
-          justifyContent: "center",
-          margin: 10,
-          padding: 10,
-        }}
-      >
-        {msg}
-      </h4>
-    </>
+    <Alert style={{ marginTop: 20 }} severity={severity}>
+      {msg}
+    </Alert>
   );
 };
 

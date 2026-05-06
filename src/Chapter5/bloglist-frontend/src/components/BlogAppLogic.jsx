@@ -3,7 +3,14 @@ import Blogs from "./Blogs";
 import Login from "./login";
 import ToggleBlogForm from "./ToggleBlogForm";
 
-const BlogAppLogic = ({ user, onLogout, blogs, setBlogs, services }) => {
+const BlogAppLogic = ({
+  user,
+  onLogout,
+  blogs,
+  setBlogs,
+  services,
+  setNotification,
+}) => {
   return (
     <div style={{ marginLeft: 50 }}>
       {/* <ToggleBlogForm
@@ -17,6 +24,7 @@ const BlogAppLogic = ({ user, onLogout, blogs, setBlogs, services }) => {
         setBlogs={setBlogs}
         onLogout={onLogout}
         blogService={services}
+        setNotification={setNotification}
       />
     </div>
   );

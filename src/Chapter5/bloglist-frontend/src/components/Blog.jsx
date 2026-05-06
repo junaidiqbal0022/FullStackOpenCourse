@@ -1,30 +1,13 @@
 import { useState, useRef } from "react";
-import Notify from "./Notify";
 import { useParams, useNavigate } from "react-router-dom";
-const Blog = ({ blog, user, blogServices, setBlogs, setErrorWithTimeout }) => {
+import { Button, Typography, Link } from "@mui/material";
+const Blog = ({ blog, user, blogServices, setBlogs, setNotification }) => {
   if (!blog) {
     return <>Blog With Id Not Found</>;
   }
   const nav = useNavigate();
   const id = useParams().id;
-  const [error, setError] = useState("");
-  const [color, setColor] = useState("red");
-  // const [fullyvisible, setFullyvisible] = useState(false);
-  const errorWithTimeout = (msg, color = "green") => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    setError(msg);
-    setColor(color);
-    timeoutRef.current = setTimeout(() => {
-      setError("");
-    }, 5000);
-  };
-  // let fullStyle = { display: fullyvisible ? "" : "none" };
-  // let titleStyle = {
-  //   display: fullyvisible ? "none" : "flex",
-  //   gap: 10,
-  // };
+
   const timeoutRef = useRef(null);
   const onClickDelete = async () => {
     console.log("We gonna delete some blogs");
@@ -33,16 +16,17 @@ const Blog = ({ blog, user, blogServices, setBlogs, setErrorWithTimeout }) => {
     );
     console.log(`User has give his whatever anwser: ${conf}`);
     if (!conf) {
-      errorWithTimeout("user has shown mercy");
+      setNotification({ msg: "user has shown mercy", severity: "info" });
       return;
     }
     console.log("user has not heart");
 
     try {
       await blogServices.deleteBlog(blog.id);
-      setErrorWithTimeout(
-        `"Someone" deleted the title: ${blog.title}, now ${blog.author} is crying...`,
-      );
+      setNotification({
+        msg: `"Someone" deleted the title: ${blog.title}, now ${blog.author} is crying...`,
+        severity: "info",
+      });
       setBlogs((prev) => ({
         ...prev,
         blogs: prev.blogs
@@ -52,8 +36,10 @@ const Blog = ({ blog, user, blogServices, setBlogs, setErrorWithTimeout }) => {
       nav("/");
     } catch (err) {
       console.log("error in delete: ", err);
-      setError(`Error: ${err.name} ${err.message}`);
-      setColor("red");
+      setNotification({
+        msg: `Error: ${err.name} ${err.message}`,
+        severity: "error",
+      });
     }
   };
 
@@ -76,55 +62,63 @@ const Blog = ({ blog, user, blogServices, setBlogs, setErrorWithTimeout }) => {
           .sort((a, b) => b.likes - a.likes),
       }));
 
-      setError("Successfully liked the blog..");
-      setColor("green");
+      setNotification({
+        msg: "Successfully liked the blog..",
+        severity: "success",
+      });
       timeoutRef.current = setTimeout(() => {
-        setError("");
-        setColor("");
+        setNotification({ msg: "", severity: "success" });
       }, 5000);
     } catch (err) {
       console.log("error ", err);
-      setError(`Error: ${err.name} ${err.message}`);
-      setColor("red");
+      setNotification({
+        msg: `Error: ${err.name} ${err.message}`,
+        severity: "error",
+      });
     }
   };
   return (
     <div style={{ marginTop: 20 }}>
-      <Notify msg={error} color={color} />
-      {/* <div style={titleStyle}>
-        {blog.title} by {blog.author}
-        <button onClick={() => setFullyvisible(!fullyvisible)}>View</button>
-      </div>
-      <div style={fullStyle}> */}
-      <div style={{ display: "flex", gap: 10 }}>
+      {/* <div style={{ display: "flex", gap: 10 }}>
         Id: {blog.id}
-        {/* <button onClick={() => setFullyvisible(!fullyvisible)}>Hide</button> */}
-        <button onClick={() => nav("/")}>Hide</button>
-      </div>
-      Title: {blog.title}
-      <br />
-      Author: {blog.author}
-      <br />
-      Link:{blog.url}
-      <br />
-      Likes: {blog.likes}
-      {user && blog && user.id !== blog.user && (
+        <Button onClick={() => nav("/")}>Hide</Button>
+      </div> */}
+      <Typography component="h5" variant="h5">
+        {blog.title}
+      </Typography>
+      <Typography variant="subtitle1">by {blog.author}</Typography>
+      <Link
+        target="_blank"
+        rel="noopener noreferrer"
+        href={blog.url.startsWith("http") ? blog.url : `http://${blog.url}`}
+      >
+        {blog.url}
+      </Link>
+      <Typography variant="subtitle1">
+        Added by {blog.user?.name ?? "Unknown"}
+      </Typography>
+      <Typography variant="subtitle1">{blog.likes} Likes</Typography>
+      {user && blog && user.id !== blog.user?.id && (
         <>
-          <button style={{ marginLeft: 10 }} onClick={onLikeClick}>
+          <Button
+            style={{ marginLeft: 10 }}
+            variant="outlined"
+            onClick={onLikeClick}
+          >
             Like
-          </button>
+          </Button>
         </>
       )}
-      <br />
-      {user && blog && user.id === blog.user && (
-        <button
+      {user && blog && user.id === blog.user?.id && (
+        <Button
+          variant="outlined"
           style={{ marginTop: 10, marginLeft: 10 }}
+          color="error"
           onClick={onClickDelete}
         >
           Remove
-        </button>
+        </Button>
       )}
-      {/* </div> */}
     </div>
   );
 };

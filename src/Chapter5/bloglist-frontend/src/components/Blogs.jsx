@@ -1,11 +1,15 @@
-import { useState, useEffect, useRef } from "react";
-import Blog from "./Blog";
-import Notify from "./Notify";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-const Blogs = ({ blogService, blogs, setBlogs }) => {
-  const [error, setError] = useState();
-  const [color, setColor] = useState("red");
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+const Blogs = ({ blogService, blogs, setBlogs, setNotification }) => {
   useEffect(() => {
     const getData = async () => {
       try {
@@ -20,29 +24,18 @@ const Blogs = ({ blogService, blogs, setBlogs }) => {
         setBlogs(dataSorted);
       } catch (err) {
         console.log(`error ${err}`);
-        setError(`Error: ${err.name} ${err.message}`);
-        setColor("red");
+        setNotification({
+          msg: `Error: ${err.name} ${err.message}`,
+          severity: "error",
+        });
       }
     };
     getData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blogService]);
-  const timeoutRef = useRef(null);
 
-  const setErrorWithTimeout = (msg, color = "green") => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-    setError(msg);
-    setColor(color);
-    timeoutRef.current = setTimeout(() => {
-      setError("");
-    }, 5000);
-  };
   return (
     <div>
-      <Notify msg={error} color={color} />
-
       {blogs?.blogs?.length > 0 ? (
         <>
           <h3>Blogs</h3>
@@ -63,14 +56,33 @@ const Blogs = ({ blogService, blogs, setBlogs }) => {
               marginTop: "20px",
             }}
           >
-            {blogs.blogs.map((blog) => (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Title</TableCell>
+                    <TableCell>Author</TableCell>
+                    <TableCell>Likes</TableCell>
+                    <TableCell>Added By</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {blogs.blogs.map((blog) => (
+                    <TableRow key={blog.id}>
+                      <TableCell>
+                        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+                      </TableCell>
+                      <TableCell>{blog.author}</TableCell>
+                      <TableCell>{blog.likes}</TableCell>
+
+                      <TableCell>{blog.user?.name ?? "Unknown"}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* {blogs.blogs.map((blog) => (
               <div key={blog.id}>
-                {/* <Blog
-                  setErrorWithTimeout={setErrorWithTimeout}
-                  blog={blog}
-                  blogServices={blogService}
-                  setBlogs={setBlogs}
-                /> */}
                 <Link to={`/blogs/${blog.id}`}>
                   {blog.title} by {blog.author}
                 </Link>
@@ -84,7 +96,7 @@ const Blogs = ({ blogService, blogs, setBlogs }) => {
                   }}
                 />
               </div>
-            ))}
+            ))} */}
           </div>
         </>
       ) : (

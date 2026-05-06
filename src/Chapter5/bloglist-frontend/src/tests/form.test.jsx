@@ -42,7 +42,11 @@ describe("toggleable", () => {
 
   function Wrapper() {
     const [blogs, setBlogs] = useState([]);
-
+    const [notification, setNotification] = useState({
+      msg: "",
+      severity: "success",
+      autoClear: true,
+    });
     return (
       <Routes>
         <Route
@@ -52,6 +56,7 @@ describe("toggleable", () => {
               bloServices={services}
               blogs={blogs}
               setBlogs={setBlogs}
+              setNotification={setNotification}
             />
           }
         />
@@ -78,7 +83,7 @@ describe("toggleable", () => {
 
     const btn = screen.getByText("Create new Blog");
     await user.click(btn);
-    const btn2 = screen.getByText("submit the form");
+    const btn2 = screen.getByText("Create");
   });
   test("Open and submit form", async () => {
     render(
@@ -91,7 +96,7 @@ describe("toggleable", () => {
     const user = userEvent.setup();
     const btn = screen.getByText("Create new Blog");
     await user.click(btn);
-    const btn2 = screen.getByText("submit the form");
+    const btn2 = screen.getByText("Create");
     expect(btn2).toBeVisible();
     await user.click(btn2);
     expect(services.create.mock.calls).toHaveLength(0);
@@ -108,7 +113,7 @@ describe("toggleable", () => {
 
     const btn = screen.getByText("Create new Blog");
     await user.click(btn);
-    const btn2 = screen.getByText("submit the form");
+    const btn2 = screen.getByText("Create");
     expect(btn2).toBeVisible();
     const title = screen.getByPlaceholderText("write title here");
     const author = screen.getByPlaceholderText("write author here");
@@ -132,7 +137,7 @@ describe("toggleable", () => {
     const btn = screen.getByText("Create new Blog");
     await user.click(btn);
 
-    const btn2 = screen.getByText("submit the form");
+    const btn2 = screen.getByText("Create");
     expect(btn2).toBeVisible();
     const title = screen.getByPlaceholderText("write title here");
     const author = screen.getByPlaceholderText("write author here");

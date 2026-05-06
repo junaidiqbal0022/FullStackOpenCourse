@@ -26,7 +26,7 @@ test.describe('Blog App ui LoginPage', () => {
     await page.getByLabel('Password').fill('root22');
     await page.getByRole('button', { name: 'login' }).click();
     await page.getByRole('button', { name: 'login' }).click();
-    const errorDiv = page.locator('.error')
+    const errorDiv = page.getByRole('alert')
     await expect(errorDiv).toBeVisible();
   });
 
@@ -35,7 +35,7 @@ test.describe('Blog App ui LoginPage', () => {
     await page.getByLabel('Username').fill('root2');
     await page.getByLabel('Password').fill('root');
     await page.getByRole('button', { name: 'login' }).click();
-    const errorDiv = page.locator('.error')
+    const errorDiv = page.getByRole('alert')
     await expect(errorDiv).toBeVisible();
   });
 });
